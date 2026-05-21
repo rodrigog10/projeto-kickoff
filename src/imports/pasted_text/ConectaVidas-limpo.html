@@ -1,0 +1,1605 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+<title>ConectaVidas</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{
+  --green:#1a7a4a;--green-l:#e8f5ee;--green-m:#2d9e62;
+  --bg:#f5f6f8;--white:#fff;--bd:#e5e7eb;
+  --t1:#111827;--t2:#6b7280;--t3:#9ca3af;
+  --red:#dc2626;--red-b:#fef2f2;
+  --yel:#d97706;--yel-b:#fffbeb;
+  --blu:#2563eb;--blu-b:#eff6ff;
+  --r:12px;--sh:0 1px 6px rgba(0,0,0,.08);
+}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--t1);font-size:14px;min-height:100vh;overflow-x:hidden}
+
+/* ── SCREENS ── */
+.screen{display:none;min-height:100vh;flex-direction:column}
+.screen.active{display:flex}
+
+/* ── LOGIN ── */
+#login{background:linear-gradient(160deg,#0f4d30 0%,#1a7a4a 50%,#2d9e62 100%);align-items:center;justify-content:center;padding:24px}
+.login-box{background:#fff;border-radius:20px;padding:32px 24px;width:100%;max-width:380px;box-shadow:0 20px 60px rgba(0,0,0,.25)}
+.login-logo{text-align:center;margin-bottom:28px}
+.login-logo .brand{font-size:24px;font-weight:700;color:var(--green);letter-spacing:-.5px}
+.login-logo .tagline{font-size:12px;color:var(--t3);margin-top:4px}
+.login-logo .icon{width:56px;height:56px;background:var(--green-l);border-radius:16px;display:flex;align-items:center;justify-content:center;margin:0 auto 12px}
+.form-g{margin-bottom:14px}
+.form-g label{display:block;font-size:12px;font-weight:600;color:var(--t2);margin-bottom:5px}
+.form-g input{width:100%;padding:12px 14px;border:1.5px solid var(--bd);border-radius:10px;font-size:14px;font-family:inherit;outline:none;transition:.2s;background:#fafafa}
+.form-g input:focus{border-color:var(--green-m);background:#fff}
+.btn-login{width:100%;padding:13px;background:var(--green);color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;margin-top:4px;transition:.2s}
+.btn-login:active{background:var(--green-m)}
+.login-err{background:#fef2f2;border:1px solid #fca5a5;color:#dc2626;padding:10px 14px;border-radius:8px;font-size:13px;margin-bottom:12px;display:none}
+.login-hints{margin-top:16px;padding-top:14px;border-top:1px solid var(--bd)}
+.login-hints p{font-size:11px;color:var(--t3);margin-bottom:6px;font-weight:600;text-transform:uppercase;letter-spacing:.5px}
+.hint-item{display:flex;justify-content:space-between;font-size:12px;color:var(--t2);padding:3px 0}
+
+/* ── TOPBAR ── */
+.topbar{background:#fff;border-bottom:1px solid var(--bd);padding:0 16px;height:54px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;flex-shrink:0}
+.topbar-left{display:flex;align-items:center;gap:10px}
+.back-btn{width:34px;height:34px;border-radius:50%;background:var(--bg);border:1px solid var(--bd);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--t2)}
+.topbar-title{font-size:15px;font-weight:700;color:var(--t1)}
+.topbar-subtitle{font-size:11px;color:var(--t3)}
+.topbar-right{display:flex;align-items:center;gap:8px}
+.notif{width:34px;height:34px;border-radius:50%;background:var(--bg);border:1px solid var(--bd);display:flex;align-items:center;justify-content:center;cursor:pointer;position:relative}
+.notif-dot{width:8px;height:8px;background:var(--red);border-radius:50%;position:absolute;top:3px;right:3px;border:1.5px solid #fff}
+.av{width:34px;height:34px;border-radius:50%;background:var(--green);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;cursor:pointer}
+
+/* ── BOTTOM NAV ── */
+.bottom-nav{background:#fff;border-top:1px solid var(--bd);display:flex;position:sticky;bottom:0;z-index:50;flex-shrink:0}
+.bn-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:8px 4px;cursor:pointer;color:var(--t3);transition:.15s;border:none;background:transparent;font-family:inherit;position:relative}
+.bn-item.active{color:var(--green)}
+.bn-item svg{width:20px;height:20px}
+.bn-label{font-size:10px;font-weight:600}
+.bn-badge{position:absolute;top:5px;right:calc(50% - 14px);background:var(--red);color:#fff;font-size:9px;font-weight:700;padding:1px 4px;border-radius:8px;min-width:16px;text-align:center}
+
+/* ── CONTENT AREA ── */
+.page-content{flex:1;overflow-y:auto;padding:16px}
+
+/* ── CARDS ── */
+.card{background:#fff;border-radius:var(--r);border:1px solid var(--bd);box-shadow:var(--sh);overflow:hidden;margin-bottom:12px}
+.card-body{padding:14px}
+.card-header{padding:12px 14px;border-bottom:1px solid var(--bd);display:flex;align-items:center;justify-content:space-between}
+.card-title{font-size:13px;font-weight:700;color:var(--t1)}
+.card-sub{font-size:11px;color:var(--t2)}
+
+/* ── STATS GRID ── */
+.stats-2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+.stats-4{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+.stat-card{background:#fff;border-radius:var(--r);border:1px solid var(--bd);padding:14px;box-shadow:var(--sh)}
+.stat-label{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:var(--t3);margin-bottom:4px}
+.stat-value{font-size:24px;font-weight:700;line-height:1}
+.stat-sub{font-size:11px;color:var(--t2);margin-top:3px}
+.c-green{color:var(--green)}.c-red{color:var(--red)}.c-yel{color:var(--yel)}.c-blu{color:var(--blu)}
+
+/* ── ALERT BANNER ── */
+.alert-banner{border-radius:10px;padding:11px 13px;margin-bottom:12px;font-size:13px;display:flex;align-items:flex-start;gap:9px}
+.ab-red{background:var(--red-b);border:1px solid #fca5a5;color:var(--red)}
+.ab-yel{background:var(--yel-b);border:1px solid #fcd34d;color:var(--yel)}
+.ab-blu{background:var(--blu-b);border:1px solid #93c5fd;color:var(--blu)}
+.ab-green{background:var(--green-l);border:1px solid #86efac;color:var(--green)}
+.ab-icon{flex-shrink:0;margin-top:1px}
+
+/* ── SECTION TITLE ── */
+.sec-title{font-size:13px;font-weight:700;color:var(--t1);margin-bottom:10px;display:flex;align-items:center;justify-content:space-between}
+.sec-link{font-size:12px;color:var(--green);font-weight:600;cursor:pointer}
+
+/* ── PATIENT / FAMILY LIST ITEMS ── */
+.list-item{background:#fff;border-radius:var(--r);border:1px solid var(--bd);box-shadow:var(--sh);padding:13px;margin-bottom:8px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:.15s}
+.list-item:active{background:var(--bg)}
+.li-av{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff;flex-shrink:0}
+.li-info{flex:1;min-width:0}
+.li-name{font-size:13px;font-weight:700;color:var(--t1);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.li-sub{font-size:11px;color:var(--t2);margin-top:1px}
+.li-right{flex-shrink:0;text-align:right}
+.li-badge{display:inline-block;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:600}
+.badge-red{background:var(--red-b);color:var(--red)}
+.badge-yel{background:var(--yel-b);color:var(--yel)}
+.badge-green{background:var(--green-l);color:var(--green)}
+.badge-blu{background:var(--blu-b);color:var(--blu)}
+.badge-gray{background:#f3f4f6;color:#6b7280}
+
+/* ── KANBAN ── */
+.kanban{display:flex;gap:10px;overflow-x:auto;padding-bottom:8px;margin-bottom:4px}
+.kanban::-webkit-scrollbar{height:3px}
+.kanban::-webkit-scrollbar-thumb{background:var(--bd);border-radius:2px}
+.k-col{flex-shrink:0;width:220px;background:#f9fafb;border-radius:var(--r);border:1px solid var(--bd);overflow:hidden}
+.k-col-head{padding:10px 12px;border-bottom:1px solid var(--bd);display:flex;align-items:center;justify-content:space-between}
+.k-col-title{font-size:12px;font-weight:700}
+.k-col-count{font-size:11px;font-weight:700;background:#fff;padding:2px 7px;border-radius:8px;color:var(--t2);border:1px solid var(--bd)}
+.k-list{padding:8px;display:flex;flex-direction:column;gap:7px}
+.k-card{background:#fff;border-radius:8px;padding:10px;border:1px solid var(--bd);cursor:pointer}
+.k-card:active{background:var(--bg)}
+.k-card-name{font-size:12px;font-weight:700;color:var(--t1)}
+.k-card-sub{font-size:11px;color:var(--t2);margin-top:2px}
+.k-card-foot{margin-top:7px;display:flex;gap:5px;flex-wrap:wrap}
+.k-tag{font-size:10px;padding:2px 7px;border-radius:20px;background:var(--bg);color:var(--t2);font-weight:600}
+
+/* ── PROFILE ── */
+.profile-hero{background:linear-gradient(135deg,var(--green),var(--green-m));padding:20px 16px;color:#fff;margin:-16px -16px 16px}
+.ph-av{width:52px;height:52px;border-radius:50%;background:rgba(255,255,255,.25);display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700;color:#fff;margin-bottom:10px}
+.ph-name{font-size:18px;font-weight:700;margin-bottom:4px}
+.ph-meta{font-size:12px;opacity:.8}
+.ph-tags{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap}
+.ph-tag{padding:4px 10px;background:rgba(255,255,255,.2);border-radius:20px;font-size:11px;font-weight:600}
+
+.info-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
+.info-item{background:#fff;border-radius:10px;border:1px solid var(--bd);padding:10px 12px}
+.info-label{font-size:10px;color:var(--t3);font-weight:600;text-transform:uppercase;letter-spacing:.4px;margin-bottom:3px}
+.info-value{font-size:13px;font-weight:600;color:var(--t1)}
+
+.history-item{display:flex;gap:10px;padding:10px 0;border-bottom:1px solid #f3f4f6;align-items:flex-start}
+.history-item:last-child{border-bottom:none}
+.h-dot{width:8px;height:8px;border-radius:50%;margin-top:5px;flex-shrink:0}
+.h-info .h-title{font-size:13px;font-weight:600;color:var(--t1)}
+.h-info .h-date{font-size:11px;color:var(--t3);margin-top:2px}
+
+/* ── CONSULTAS LIST ── */
+.consult-item{background:#fff;border-radius:var(--r);border:1px solid var(--bd);padding:13px;margin-bottom:8px;border-left:4px solid transparent}
+.ci-urgente{border-left-color:var(--red)}
+.ci-agendada{border-left-color:var(--blu)}
+.ci-realizada{border-left-color:var(--green)}
+.ci-faltou{border-left-color:var(--yel)}
+.ci-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:5px}
+.ci-name{font-size:13px;font-weight:700}
+.ci-meta{font-size:11px;color:var(--t2);margin-bottom:6px}
+.ci-foot{display:flex;align-items:center;justify-content:space-between}
+.ci-time{font-size:11px;color:var(--t3);font-weight:600}
+
+/* ── ALERT ITEMS ── */
+.alert-item{background:#fff;border-radius:var(--r);border:1px solid var(--bd);padding:13px;margin-bottom:8px;display:flex;gap:10px}
+.ai-stripe{width:4px;border-radius:2px;flex-shrink:0;align-self:stretch}
+.ai-body{flex:1}
+.ai-title{font-size:13px;font-weight:700;color:var(--t1);margin-bottom:3px}
+.ai-desc{font-size:12px;color:var(--t2);line-height:1.4;margin-bottom:6px}
+.ai-foot{display:flex;align-items:center;gap:6px}
+.ai-tag{font-size:10px;padding:2px 7px;border-radius:20px;background:var(--bg);color:var(--t2);font-weight:600}
+.ai-time{font-size:10px;color:var(--t3)}
+
+/* ── ENC ITEM ── */
+.enc-item{background:#fff;border-radius:var(--r);border:1px solid var(--bd);padding:13px;margin-bottom:8px}
+.enc-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:6px}
+.enc-name{font-size:13px;font-weight:700}
+.enc-spec{font-size:12px;color:var(--t2);margin-bottom:5px}
+.enc-foot{display:flex;align-items:center;justify-content:space-between}
+
+/* ── FORM ── */
+.form-row{margin-bottom:12px}
+.form-label{display:block;font-size:12px;font-weight:600;color:var(--t2);margin-bottom:5px}
+.form-input,.form-select,.form-textarea{width:100%;padding:11px 13px;border:1.5px solid var(--bd);border-radius:10px;font-size:14px;font-family:inherit;color:var(--t1);outline:none;background:#fafafa}
+.form-input:focus,.form-select:focus,.form-textarea:focus{border-color:var(--green-m);background:#fff}
+.form-textarea{min-height:80px;resize:vertical}
+
+/* ── BUTTONS ── */
+.btn{width:100%;padding:13px;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;transition:.15s;display:flex;align-items:center;justify-content:center;gap:7px;margin-bottom:8px}
+.btn:last-child{margin-bottom:0}
+.btn-primary{background:var(--green);color:#fff}
+.btn-primary:active{background:var(--green-m)}
+.btn-secondary{background:var(--bg);color:var(--t1);border:1px solid var(--bd)}
+.btn-danger{background:var(--red-b);color:var(--red);border:1px solid #fca5a5}
+
+/* ── CHART BARS ── */
+.bars{display:flex;align-items:flex-end;gap:6px;height:60px;margin-top:6px}
+.bar-wrap{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px}
+.bar{width:100%;border-radius:3px 3px 0 0}
+.bar-g{background:var(--green)}
+.bar-e{background:var(--green-l);border:1px solid var(--bd)}
+.bar-lbl{font-size:9px;color:var(--t3)}
+
+/* ── PROGRESS ── */
+.prog-row{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.prog-label{font-size:12px;color:var(--t2);width:90px;flex-shrink:0}
+.prog-bar-bg{flex:1;height:6px;background:var(--bg);border-radius:3px;overflow:hidden}
+.prog-bar-fill{height:100%;border-radius:3px}
+.prog-val{font-size:12px;font-weight:700;color:var(--t1);width:30px;text-align:right;flex-shrink:0}
+
+/* ── MODAL ── */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:200;display:none;align-items:flex-end;justify-content:center}
+.modal-overlay.open{display:flex}
+.modal-sheet{background:#fff;border-radius:20px 20px 0 0;width:100%;max-width:480px;max-height:90vh;overflow-y:auto;padding:20px 16px 32px}
+.modal-handle{width:36px;height:4px;background:var(--bd);border-radius:2px;margin:0 auto 16px}
+.modal-title{font-size:16px;font-weight:700;margin-bottom:16px}
+
+/* ── VACINACAO ── */
+.vac-item{background:#fff;border-radius:var(--r);border:1px solid var(--bd);padding:13px;margin-bottom:8px;display:flex;align-items:center;gap:12px}
+.vac-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.vac-info{flex:1}
+.vac-name{font-size:13px;font-weight:700}
+.vac-meta{font-size:11px;color:var(--t2);margin-top:2px}
+
+/* ── VISITA ITEM ── */
+.visit-item{background:#fff;border-radius:var(--r);border:1px solid var(--bd);padding:13px;margin-bottom:8px;border-left:4px solid var(--bd)}
+.vi-urgente{border-left-color:var(--red)}
+.vi-agendada{border-left-color:var(--blu)}
+.vi-realizada{border-left-color:var(--green)}
+.vi-name{font-size:13px;font-weight:700;margin-bottom:4px}
+.vi-addr{font-size:11px;color:var(--t2);margin-bottom:4px;display:flex;align-items:center;gap:4px}
+.vi-reason{font-size:12px;color:var(--t2);margin-bottom:7px}
+.vi-foot{display:flex;align-items:center;justify-content:space-between}
+
+/* ── MISC ── */
+.divider{height:1px;background:var(--bd);margin:12px 0}
+.empty{text-align:center;padding:40px 20px;color:var(--t3)}
+.empty svg{margin-bottom:10px}
+.tag{display:inline-block;padding:3px 8px;border-radius:20px;font-size:11px;font-weight:600;background:var(--bg);color:var(--t2);margin:2px}
+.row-2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+
+/* ── SCROLL INDICATOR ── */
+.scroll-hint{font-size:11px;color:var(--t3);text-align:center;padding:4px 0;margin-bottom:4px}
+</style>
+</head>
+<body>
+
+<!-- ════════════════════════════════════════ -->
+<!--  LOGIN                                   -->
+<!-- ════════════════════════════════════════ -->
+<div class="screen active" id="s-login">
+  <div style="background:linear-gradient(160deg,#0f4d30 0%,#1a7a4a 50%,#2d9e62 100%);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px">
+    <div class="login-box">
+      <div class="login-logo">
+        <div class="icon">
+          <svg width="28" height="28" fill="none" stroke="#1a7a4a" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        </div>
+        <div class="brand">ConectaVidas</div>
+        <div class="tagline">Prefeitura do Recife · Integração Social</div>
+      </div>
+      <div class="login-err" id="login-err">Usuário ou senha incorretos. Tente novamente.</div>
+      <div class="form-g">
+        <label>Usuário</label>
+        <input type="text" id="inp-user" placeholder="Digite seu usuário" autocomplete="username"/>
+      </div>
+      <div class="form-g">
+        <label>Senha</label>
+        <input type="password" id="inp-pass" placeholder="Digite sua senha" autocomplete="current-password"/>
+      </div>
+      <button class="btn-login" onclick="doLogin()">Entrar no Sistema</button>
+      <div class="login-hints">
+        <p>Acessos de demonstração</p>
+        <div class="hint-item"><span>assistente / assistente</span><span style="color:#1a7a4a;font-weight:600">Social</span></div>
+        <div class="hint-item"><span>saude / saude</span><span style="color:#1a7a4a;font-weight:600">Saúde</span></div>
+        <div class="hint-item"><span>escolar / escolar</span><span style="color:#1a7a4a;font-weight:600">Escolar</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════ -->
+<!--  ÁREA: ASSISTENTE SOCIAL                 -->
+<!-- ════════════════════════════════════════ -->
+
+<!-- AS: HOME -->
+<div class="screen" id="s-as-home">
+  <div class="topbar">
+    <div class="topbar-left">
+      <div>
+        <div class="topbar-title">Bom dia, Ana Paula.</div>
+        <div class="topbar-subtitle">CRAS Ibura · Assistente Social</div>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <div class="notif" onclick="goTo('s-as-alerts')"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><div class="notif-dot"></div></div>
+      <div class="av" onclick="doLogout()">AP</div>
+    </div>
+  </div>
+  <div class="page-content">
+    <div class="alert-banner ab-red">
+      <div class="ab-icon"><svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div>
+      <span><strong>3 casos críticos</strong> precisam de atenção imediata hoje.</span>
+    </div>
+    <div class="stats-4">
+      <div class="stat-card"><div class="stat-label">Famílias</div><div class="stat-value c-green">42</div><div class="stat-sub">Ativas</div></div>
+      <div class="stat-card"><div class="stat-label">Críticos</div><div class="stat-value c-red">3</div><div class="stat-sub">Urgentes</div></div>
+      <div class="stat-card"><div class="stat-label">Encam.</div><div class="stat-value c-yel">7</div><div class="stat-sub">Pendentes</div></div>
+      <div class="stat-card"><div class="stat-label">Visitas</div><div class="stat-value c-blu">2</div><div class="stat-sub">Hoje</div></div>
+    </div>
+    <div class="sec-title">Casos Críticos <span class="sec-link" onclick="goTo('s-as-kanban')">Ver todos →</span></div>
+    <div class="list-item" onclick="goTo('s-as-familia')">
+      <div class="li-av" style="background:#dc2626">LS</div>
+      <div class="li-info"><div class="li-name">Família Silva</div><div class="li-sub">Luana · 3 anos · Vacinação atrasada</div></div>
+      <div class="li-right"><span class="li-badge badge-red">Urgente</span></div>
+    </div>
+    <div class="list-item" onclick="goTo('s-as-familia')">
+      <div class="li-av" style="background:#d97706">CR</div>
+      <div class="li-info"><div class="li-name">Família Ramos</div><div class="li-sub">Carlos · 5 anos · Desnutrição</div></div>
+      <div class="li-right"><span class="li-badge badge-yel">Médio</span></div>
+    </div>
+    <div class="list-item" onclick="goTo('s-as-familia')">
+      <div class="li-av" style="background:#7c3aed">MF</div>
+      <div class="li-info"><div class="li-name">Família Ferreira</div><div class="li-sub">Maria · 34 anos · Pré-natal irregular</div></div>
+      <div class="li-right"><span class="li-badge badge-yel">Médio</span></div>
+    </div>
+    <div class="divider"></div>
+    <div class="sec-title">Ações Rápidas</div>
+    <div class="row-2" style="gap:10px;margin-bottom:12px">
+      <div class="card" style="margin:0;cursor:pointer" onclick="goTo('s-as-kanban')">
+        <div class="card-body" style="text-align:center;padding:16px 10px">
+          <div style="width:36px;height:36px;background:var(--blu-b);border-radius:10px;display:flex;align-items:center;justify-content:center;margin:0 auto 8px">
+            <svg width="18" height="18" fill="none" stroke="#2563eb" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+          </div>
+          <div style="font-size:12px;font-weight:700">Kanban</div>
+          <div style="font-size:10px;color:var(--t3)">Gestão de casos</div>
+        </div>
+      </div>
+      <div class="card" style="margin:0;cursor:pointer" onclick="openModal('m-enc-form')">
+        <div class="card-body" style="text-align:center;padding:16px 10px">
+          <div style="width:36px;height:36px;background:var(--green-l);border-radius:10px;display:flex;align-items:center;justify-content:center;margin:0 auto 8px">
+            <svg width="18" height="18" fill="none" stroke="#1a7a4a" stroke-width="2" viewBox="0 0 24 24"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
+          </div>
+          <div style="font-size:12px;font-weight:700">Encaminhar</div>
+          <div style="font-size:10px;color:var(--t3)">Nova solicitação</div>
+        </div>
+      </div>
+      <div class="card" style="margin:0;cursor:pointer" onclick="goTo('s-as-monitor')">
+        <div class="card-body" style="text-align:center;padding:16px 10px">
+          <div style="width:36px;height:36px;background:var(--yel-b);border-radius:10px;display:flex;align-items:center;justify-content:center;margin:0 auto 8px">
+            <svg width="18" height="18" fill="none" stroke="#d97706" stroke-width="2" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+          </div>
+          <div style="font-size:12px;font-weight:700">Monitorar</div>
+          <div style="font-size:10px;color:var(--t3)">Evolução de casos</div>
+        </div>
+      </div>
+      <div class="card" style="margin:0;cursor:pointer" onclick="goTo('s-as-alerts')">
+        <div class="card-body" style="text-align:center;padding:16px 10px">
+          <div style="width:36px;height:36px;background:var(--red-b);border-radius:10px;display:flex;align-items:center;justify-content:center;margin:0 auto 8px">
+            <svg width="18" height="18" fill="none" stroke="#dc2626" stroke-width="2" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg>
+          </div>
+          <div style="font-size:12px;font-weight:700">Alertas</div>
+          <div style="font-size:10px;color:var(--t3)">3 pendentes</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="bottom-nav">
+    <button class="bn-item active" onclick="goTo('s-as-home')"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><span class="bn-label">Home</span></button>
+    <button class="bn-item" onclick="goTo('s-as-kanban')"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg><span class="bn-label">Kanban</span></button>
+    <button class="bn-item" onclick="goTo('s-as-monitor')"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg><span class="bn-label">Monitor</span></button>
+    <button class="bn-item" onclick="goTo('s-as-enc')"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/></svg><span class="bn-label">Encam.</span></button>
+    <button class="bn-item" onclick="goTo('s-as-alerts')"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg><span class="bn-label">Alertas</span><span class="bn-badge">3</span></button>
+  </div>
+</div>
+
+<!-- AS: KANBAN -->
+<div class="screen" id="s-as-kanban">
+  <div class="topbar">
+    <div class="topbar-left">
+      <div class="back-btn" onclick="goBack()"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></div>
+      <div class="topbar-title">Kanban de Casos</div>
+    </div>
+  </div>
+  <div class="page-content">
+    <div class="scroll-hint">← Deslize para ver colunas →</div>
+    <div class="kanban">
+      <div class="k-col">
+        <div class="k-col-head"><span class="k-col-title" style="color:var(--red)">🔴 Risco Alto</span><span class="k-col-count">3</span></div>
+        <div class="k-list">
+          <div class="k-card" onclick="goTo('s-as-familia')">
+            <div class="k-card-name">Família Silva</div>
+            <div class="k-card-sub">Luana · 3 anos</div>
+            <div class="k-card-foot"><span class="k-tag">Vacinação</span><span class="k-tag">CRAS Ibura</span></div>
+          </div>
+          <div class="k-card" onclick="goTo('s-as-familia')">
+            <div class="k-card-name">Família Gomes</div>
+            <div class="k-card-sub">João · 7 anos</div>
+            <div class="k-card-foot"><span class="k-tag">Escola</span><span class="k-tag">Negligência</span></div>
+          </div>
+          <div class="k-card" onclick="goTo('s-as-familia')">
+            <div class="k-card-name">Família Ramos</div>
+            <div class="k-card-sub">Carlos · 5 anos</div>
+            <div class="k-card-foot"><span class="k-tag">Desnutrição</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="k-col">
+        <div class="k-col-head"><span class="k-col-title" style="color:var(--yel)">🟡 Acompanhamento</span><span class="k-col-count">5</span></div>
+        <div class="k-list">
+          <div class="k-card" onclick="goTo('s-as-familia')">
+            <div class="k-card-name">Família Ferreira</div>
+            <div class="k-card-sub">Maria · 34 anos</div>
+            <div class="k-card-foot"><span class="k-tag">Pré-natal</span><span class="k-tag">Gestante</span></div>
+          </div>
+          <div class="k-card" onclick="goTo('s-as-familia')">
+            <div class="k-card-name">Família Pereira</div>
+            <div class="k-card-sub">Rosa · 68 anos</div>
+            <div class="k-card-foot"><span class="k-tag">HAS</span><span class="k-tag">Idoso</span></div>
+          </div>
+          <div class="k-card" onclick="goTo('s-as-familia')">
+            <div class="k-card-name">Família Souza</div>
+            <div class="k-card-sub">3 membros</div>
+            <div class="k-card-foot"><span class="k-tag">Triagem</span><span class="k-tag">Nova</span></div>
+          </div>
+          <div class="k-card" onclick="goTo('s-as-familia')">
+            <div class="k-card-name">Família Lima</div>
+            <div class="k-card-sub">4 membros</div>
+            <div class="k-card-foot"><span class="k-tag">Benefício</span></div>
+          </div>
+          <div class="k-card" onclick="goTo('s-as-familia')">
+            <div class="k-card-name">Família Costa</div>
+            <div class="k-card-sub">Paulo · 45 anos</div>
+            <div class="k-card-foot"><span class="k-tag">Psiquiatria</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="k-col">
+        <div class="k-col-head"><span class="k-col-title" style="color:var(--green)">🟢 Resolvidos</span><span class="k-col-count">4</span></div>
+        <div class="k-list">
+          <div class="k-card"><div class="k-card-name">Família Alves</div><div class="k-card-sub">Pedro · 4 anos</div><div class="k-card-foot"><span class="k-tag">Vacinação ✓</span></div></div>
+          <div class="k-card"><div class="k-card-name">Família Torres</div><div class="k-card-sub">Cecília · 32 anos</div><div class="k-card-foot"><span class="k-tag">NASF ✓</span></div></div>
+          <div class="k-card"><div class="k-card-name">Família Neto</div><div class="k-card-sub">Bruno · 28 anos</div><div class="k-card-foot"><span class="k-tag">CAPS ✓</span></div></div>
+          <div class="k-card"><div class="k-card-name">Família Melo</div><div class="k-card-sub">5 membros</div><div class="k-card-foot"><span class="k-tag">Benefício ✓</span></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="bottom-nav">
+    <button class="bn-item" onclick="goTo('s-as-home')"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg><span class="bn-label">Home</span></button>
+    <button class="bn-item active" onclick="goTo('s-as-kanban')"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg><span class="bn-label">Kanban</span></button>
+    <button class="bn-item" onclick="goTo('s-as-monitor')"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg><span class="bn-label">Monitor</span></button>
+    <button class="bn-item" onclick="goTo('s-as-enc')"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/></svg><span class="bn-label">Encam.</span></button>
+    <button class="bn-item" onclick="goTo('s-as-alerts')"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg><span class="bn-label">Alertas</span><span class="bn-badge">3</span></button>
+  </div>
+</div>
+
+<!-- AS: MONITOR -->
+<div class="screen" id="s-as-monitor">
+  <div class="topbar">
+    <div class="topbar-left">
+      <div class="back-btn" onclick="goBack()"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></div>
+      <div class="topbar-title">Monitoramento</div>
+    </div>
+  </div>
+  <div class="page-content">
+    <div class="stats-4">
+      <div class="stat-card"><div class="stat-label">Famílias</div><div class="stat-value c-green">42</div><div class="stat-sub">Monitoradas</div></div>
+      <div class="stat-card"><div class="stat-label">Em Risco</div><div class="stat-value c-red">8</div><div class="stat-sub">Ativas</div></div>
+      <div class="stat-card"><div class="stat-label">Resolvidos</div><div class="stat-value c-green">14</div><div class="stat-sub">Este mês</div></div>
+      <div class="stat-card"><div class="stat-label">Benefícios</div><div class="stat-value c-blu">23</div><div class="stat-sub">Ativos</div></div>
+    </div>
+    <div class="card">
+      <div class="card-header"><div class="card-title">Casos por Semana</div></div>
+      <div class="card-body">
+        <div class="bars">
+          <div class="bar-wrap"><div class="bar bar-g" style="height:45px"></div><div class="bar-lbl">S1</div></div>
+          <div class="bar-wrap"><div class="bar bar-g" style="height:58px"></div><div class="bar-lbl">S2</div></div>
+          <div class="bar-wrap"><div class="bar bar-g" style="height:38px"></div><div class="bar-lbl">S3</div></div>
+          <div class="bar-wrap"><div class="bar bar-e" style="height:28px"></div><div class="bar-lbl">S4</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header"><div class="card-title">Famílias por Situação</div></div>
+      <div class="card-body">
+        <div class="prog-row"><span class="prog-label">Risco Alto</span><div class="prog-bar-bg"><div class="prog-bar-fill" style="width:19%;background:var(--red)"></div></div><span class="prog-val">8</span></div>
+        <div class="prog-row"><span class="prog-label">Acompanham.</span><div class="prog-bar-bg"><div class="prog-bar-fill" style="width:48%;background:var(--yel)"></div></div><span class="prog-val">20</span></div>
+        <div class="prog-row"><span class="prog-label">Resolvidos</span><div class="prog-bar-bg"><div class="prog-bar-fill" style="width:33%;background:var(--green)"></div></div><span class="prog-val">14</span></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header"><div class="card-title">Tipos de Vulnerabilidade</div></div>
+      <div class="card-body">
+        <div class="prog-row"><span class="prog-label">Saúde</span><div class="prog-bar-bg"><div class="prog-bar-fill" style="width:60%;background:var(--red)"></div></div><span class="prog-val">60%</span></div>
+        <div class="prog-row"><span class="prog-label">Alimentar</span><div class="prog-bar-bg"><div class="prog-bar-fill" style="width:40%;background:var(--yel)"></div></div><span class="prog-val">40%</span></div>
+        <div class="prog-row"><span class="prog-label">Educação</span><div class="prog-bar-bg"><div class="prog-bar-fill" style="width:30%;background:var(--blu)"></div></div><span class="prog-val">30%</span></div>
+        <div class="prog-row"><span class="prog-label">Habitação</span><div class="prog-bar-bg"><div class="prog-bar-fill" style="width:25%;background:var(--green)"></div></div><span class="prog-val">25%</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="bottom-nav">
+    <button class="bn-item" onclick="goTo('s-as-home')"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg><span class="bn-label">Home</span></button>
+    <button class="bn-item" onclick="goTo('s-as-kanban')"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg><span class="bn-label">Kanban</span></button>
+    <button class="bn-item active"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg><span class="bn-label">Monitor</span></button>
+    <button class="bn-item" onclick="goTo('s-as-enc')"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/></svg><span class="bn-label">Encam.</span></button>
+    <button class="bn-item" onclick="goTo('s-as-alerts')"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg><span class="bn-label">Alertas</span><span class="bn-badge">3</span></button>
+  </div>
+</div>
+
+<!-- AS: ENCAMINHAMENTOS -->
+<div class="screen" id="s-as-enc">
+  <div class="topbar">
+    <div class="topbar-left">
+      <div class="back-btn" onclick="goBack()"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></div>
+      <div class="topbar-title">Encaminhamentos</div>
+    </div>
+    <div class="topbar-right">
+      <button class="btn btn-primary" style="width:auto;padding:8px 14px;margin:0;font-size:13px" onclick="openModal('m-enc-form')">+ Novo</button>
+    </div>
+  </div>
+  <div class="page-content">
+    <div class="stats-2" style="grid-template-columns:repeat(3,1fr)">
+      <div class="stat-card"><div class="stat-label">Ativos</div><div class="stat-value c-yel">7</div></div>
+      <div class="stat-card"><div class="stat-label">Em And.</div><div class="stat-value c-blu">4</div></div>
+      <div class="stat-card"><div class="stat-label">Concluídos</div><div class="stat-value c-green">19</div></div>
+    </div>
+    <div class="sec-title">Aguardando Resposta</div>
+    <div class="enc-item">
+      <div class="enc-top"><div class="enc-name">João Gomes · 7 anos</div><span class="li-badge badge-red">Urgente</span></div>
+      <div class="enc-spec">CAPS Infantil – Psicologia</div>
+      <div class="enc-foot"><span class="tag">Escola EMEF Ibura</span><span style="font-size:11px;color:var(--t3)">11/05/2026</span></div>
+    </div>
+    <div class="enc-item">
+      <div class="enc-top"><div class="enc-name">Carlos Ramos · 5 anos</div><span class="li-badge badge-red">Urgente</span></div>
+      <div class="enc-spec">NASF – Nutrição</div>
+      <div class="enc-foot"><span class="tag">CRAS Jordão</span><span style="font-size:11px;color:var(--t3)">13/05/2026</span></div>
+    </div>
+    <div class="enc-item">
+      <div class="enc-top"><div class="enc-name">Maria Ferreira · 34 anos</div><span class="li-badge badge-yel">Médio</span></div>
+      <div class="enc-spec">Ginecologia / Pré-natal</div>
+      <div class="enc-foot"><span class="tag">CRAS Ibura</span><span style="font-size:11px;color:var(--t3)">01/05/2026</span></div>
+    </div>
+    <div class="enc-item">
+      <div class="enc-top"><div class="enc-name">Rosa Pereira · 68 anos</div><span class="li-badge badge-yel">Médio</span></div>
+      <div class="enc-spec">Cardiologia</div>
+      <div class="enc-foot"><span class="tag">CRAS Mustardinha</span><span style="font-size:11px;color:var(--t3)">03/05/2026</span></div>
+    </div>
+    <div class="sec-title" style="margin-top:4px">Concluídos Recentes</div>
+    <div class="enc-item" style="opacity:.6">
+      <div class="enc-top"><div class="enc-name">Pedro Alves · 4 anos</div><span class="li-badge badge-green">Concluído</span></div>
+      <div class="enc-spec">Pediatria – UBS Ibura</div>
+      <div class="enc-foot"><span class="tag">UBS</span><span style="font-size:11px;color:var(--t3)">10/05/2026</span></div>
+    </div>
+    <div class="enc-item" style="opacity:.6">
+      <div class="enc-top"><div class="enc-name">Cecília Torres · 32 anos</div><span class="li-badge badge-green">Concluído</span></div>
+      <div class="enc-spec">NASF – Nutrição</div>
+      <div class="enc-foot"><span class="tag">NASF</span><span style="font-size:11px;color:var(--t3)">09/05/2026</span></div>
+    </div>
+  </div>
+  <div class="bottom-nav">
+    <button class="bn-item" onclick="goTo('s-as-home')"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg><span class="bn-label">Home</span></button>
+    <button class="bn-item" onclick="goTo('s-as-kanban')"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg><span class="bn-label">Kanban</span></button>
+    <button class="bn-item" onclick="goTo('s-as-monitor')"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg><span class="bn-label">Monitor</span></button>
+    <button class="bn-item active"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/></svg><span class="bn-label">Encam.</span></button>
+    <button class="bn-item" onclick="goTo('s-as-alerts')"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg><span class="bn-label">Alertas</span><span class="bn-badge">3</span></button>
+  </div>
+</div>
+
+<!-- AS: ALERTS -->
+<div class="screen" id="s-as-alerts">
+  <div class="topbar">
+    <div class="topbar-left">
+      <div class="back-btn" onclick="goBack()"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></div>
+      <div class="topbar-title">Alertas</div>
+    </div>
+  </div>
+  <div class="page-content">
+    <div class="alert-item">
+      <div class="ai-stripe" style="background:var(--red)"></div>
+      <div class="ai-body">
+        <div class="ai-title">Vacinação em Atraso — Luana Silva</div>
+        <div class="ai-desc">Tríplice viral com 6 semanas de atraso. Família não comparece às consultas agendadas.</div>
+        <div class="ai-foot"><span class="ai-tag">Crítico</span><span class="ai-tag">Vacinação</span><span class="ai-time">Hoje, 2h atrás</span></div>
+      </div>
+    </div>
+    <div class="alert-item">
+      <div class="ai-stripe" style="background:var(--red)"></div>
+      <div class="ai-body">
+        <div class="ai-title">Suspeita de Desnutrição — Carlos Ramos</div>
+        <div class="ai-desc">Peso abaixo da curva. Encaminhado pela escola EMEF Ibura. Avaliação nutricional urgente.</div>
+        <div class="ai-foot"><span class="ai-tag">Crítico</span><span class="ai-tag">Nutrição</span><span class="ai-time">Há 1 dia</span></div>
+      </div>
+    </div>
+    <div class="alert-item">
+      <div class="ai-stripe" style="background:var(--red)"></div>
+      <div class="ai-body">
+        <div class="ai-title">Consulta Urgente — João Gomes</div>
+        <div class="ai-desc">Segunda falta consecutiva. Escola reportou comportamento atípico e suspeita de negligência.</div>
+        <div class="ai-foot"><span class="ai-tag">Crítico</span><span class="ai-tag">Escola</span><span class="ai-time">Hoje, 3h atrás</span></div>
+      </div>
+    </div>
+    <div class="alert-item">
+      <div class="ai-stripe" style="background:var(--yel)"></div>
+      <div class="ai-body">
+        <div class="ai-title">Pré-natal Irregular — Maria Ferreira</div>
+        <div class="ai-desc">2 consultas perdidas consecutivamente. Gestação de 20 semanas.</div>
+        <div class="ai-foot"><span class="ai-tag">Médio</span><span class="ai-tag">Pré-natal</span><span class="ai-time">Há 2 dias</span></div>
+      </div>
+    </div>
+    <div class="alert-item">
+      <div class="ai-stripe" style="background:var(--yel)"></div>
+      <div class="ai-body">
+        <div class="ai-title">HAS sem Acompanhamento — Rosa Pereira</div>
+        <div class="ai-desc">Última aferição há 45 dias. Paciente idosa com hipertensão.</div>
+        <div class="ai-foot"><span class="ai-tag">Médio</span><span class="ai-tag">HAS</span><span class="ai-time">Há 5 dias</span></div>
+      </div>
+    </div>
+    <div class="alert-item" style="opacity:.6">
+      <div class="ai-stripe" style="background:var(--green)"></div>
+      <div class="ai-body">
+        <div class="ai-title">Vacinação Atualizada — Pedro Alves</div>
+        <div class="ai-desc">Cartão de vacinas atualizado após visita domiciliar.</div>
+        <div class="ai-foot"><span class="ai-tag">Resolvido</span><span class="ai-time">13/05</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="bottom-nav">
+    <button class="bn-item" onclick="goTo('s-as-home')"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg><span class="bn-label">Home</span></button>
+    <button class="bn-item" onclick="goTo('s-as-kanban')"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg><span class="bn-label">Kanban</span></button>
+    <button class="bn-item" onclick="goTo('s-as-monitor')"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg><span class="bn-label">Monitor</span></button>
+    <button class="bn-item" onclick="goTo('s-as-enc')"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/></svg><span class="bn-label">Encam.</span></button>
+    <button class="bn-item active"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg><span class="bn-label">Alertas</span></button>
+  </div>
+</div>
+
+<!-- AS: PERFIL FAMÍLIA -->
+<div class="screen" id="s-as-familia">
+  <div class="topbar">
+    <div class="topbar-left">
+      <div class="back-btn" onclick="goBack()"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></div>
+      <div class="topbar-title">Perfil da Família</div>
+    </div>
+  </div>
+  <div class="page-content">
+    <div class="profile-hero">
+      <div class="ph-av">LS</div>
+      <div class="ph-name">Família Silva</div>
+      <div class="ph-meta">Luana Silva · 3 anos · Via CRAS Ibura</div>
+      <div class="ph-tags"><span class="ph-tag">Risco Alto</span><span class="ph-tag">Vacinação</span><span class="ph-tag">CRAS Ibura</span></div>
+    </div>
+    <div class="info-grid">
+      <div class="info-item"><div class="info-label">Responsável</div><div class="info-value">Ana Silva</div></div>
+      <div class="info-item"><div class="info-label">Telefone</div><div class="info-value">(81) 9 9999-0001</div></div>
+      <div class="info-item"><div class="info-label">NIS</div><div class="info-value">1234567890</div></div>
+      <div class="info-item"><div class="info-label">UBS Ref.</div><div class="info-value">UBS Ibura II</div></div>
+      <div class="info-item" style="grid-column:1/-1"><div class="info-label">Endereço</div><div class="info-value">R. das Palmeiras, 114 · Ibura</div></div>
+    </div>
+    <div class="alert-banner ab-red">
+      <div class="ab-icon"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg></div>
+      <span>Vacinação tríplice viral com 6 semanas de atraso. Família não comparece às consultas.</span>
+    </div>
+    <div class="sec-title">Histórico de Atendimentos</div>
+    <div class="card">
+      <div class="card-body" style="padding:10px 14px">
+        <div class="history-item">
+          <div class="h-dot" style="background:var(--red)"></div>
+          <div class="h-info"><div class="h-title">Alerta de vacinação gerado</div><div class="h-date">15/05/2026 · Sistema</div></div>
+        </div>
+        <div class="history-item">
+          <div class="h-dot" style="background:var(--yel)"></div>
+          <div class="h-info"><div class="h-title">Consulta — faltou</div><div class="h-date">10/05/2026 · UBS Ibura II</div></div>
+        </div>
+        <div class="history-item">
+          <div class="h-dot" style="background:var(--yel)"></div>
+          <div class="h-info"><div class="h-title">Encaminhamento para pediatria</div><div class="h-date">01/05/2026 · CRAS Ibura</div></div>
+        </div>
+        <div class="history-item">
+          <div class="h-dot" style="background:var(--green)"></div>
+          <div class="h-info"><div class="h-title">Cadastro realizado</div><div class="h-date">10/04/2026 · CRAS Ibura</div></div>
+        </div>
+      </div>
+    </div>
+    <button class="btn btn-primary" onclick="openModal('m-enc-form')">
+      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/></svg>
+      Gerar Encaminhamento
+    </button>
+    <button class="btn btn-secondary" onclick="goBack()">Voltar</button>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════ -->
+<!--  ÁREA: SAÚDE                            -->
+<!-- ════════════════════════════════════════ -->
+
+<!-- SAUDE: HOME -->
+<div class="screen" id="s-sd-home">
+  <div class="topbar">
+    <div class="topbar-left">
+      <div>
+        <div class="topbar-title">Bom dia, Dr. Marcos.</div>
+        <div class="topbar-subtitle">UBS Ibura II · Clínico Geral</div>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <div class="notif" onclick="goTo('s-sd-alerts')"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><div class="notif-dot"></div></div>
+      <div class="av" onclick="doLogout()">DM</div>
+    </div>
+  </div>
+  <div class="page-content">
+    <div class="alert-banner ab-red">
+      <div class="ab-icon"><svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div>
+      <span><strong>2 pacientes</strong> não compareceram às consultas de hoje.</span>
+    </div>
+    <div class="stats-4">
+      <div class="stat-card"><div class="stat-label">Hoje</div><div class="stat-value">4</div><div class="stat-sub">Consultas</div></div>
+      <div class="stat-card"><div class="stat-label">Faltas</div><div class="stat-value c-red">2</div><div class="stat-sub">Hoje</div></div>
+      <div class="stat-card"><div class="stat-label">Críticos</div><div class="stat-value c-red">3</div><div class="stat-sub">Urgentes</div></div>
+      <div class="stat-card"><div class="stat-label">Vacinas</div><div class="stat-value c-yel">7</div><div class="stat-sub">Atrasadas</div></div>
+    </div>
+    <div class="sec-title">Pacientes — Hoje <span class="sec-link" onclick="goTo('s-sd-consultas')">Ver todos →</span></div>
+    <div class="list-item" onclick="goTo('s-sd-paciente')">
+      <div class="li-av" style="background:#dc2626">LS</div>
+      <div class="li-info"><div class="li-name">Luana Silva · 3 anos</div><div class="li-sub">10h30 · Urgente · Vacinação</div></div>
+      <div class="li-right"><span class="li-badge badge-yel">Faltou</span></div>
+    </div>
+    <div class="list-item" onclick="goTo('s-sd-paciente')">
+      <div class="li-av" style="background:#2563eb">JG</div>
+      <div class="li-info"><div class="li-name">João Gomes · 7 anos</div><div class="li-sub">08h00 · Rotina</div></div>
+      <div class="li-right"><span class="li-badge badge-yel">Faltou</span></div>
+    </div>
+    <div class="list-item" onclick="goTo('s-sd-paciente')">
+      <div class="li-av" style="background:#d97706">CR</div>
+      <div class="li-info"><div class="li-name">Carlos Ramos · 5 anos</div><div class="li-sub">14h00 · Retorno · Desnutrição</div></div>
+      <div class="li-right"><span class="li-badge badge-blu">Agendada</span></div>
+    </div>
+    <div class="list-item" onclick="goTo('s-sd-paciente')">
+      <div class="li-av" style="background:#7c3aed">MF</div>
+      <div class="li-info"><div class="li-name">Maria Ferreira · 34 anos</div><div class="li-sub">16h30 · Pré-natal</div></div>
+      <div class="li-right"><span class="li-badge badge-blu">Agendada</span></div>
+    </div>
+    <div class="divider"></div>
+    <div class="sec-title">Ações Rápidas</div>
+    <div class="row-2" style="gap:10px;margin-bottom:12px">
+      <div class="card" style="margin:0;cursor:pointer" onclick="openModal('m-agendar')">
+        <div class="card-body" style="text-align:center;padding:16px 10px">
+          <div style="width:36px;height:36px;background:var(--green-l);border-radius:10px;display:flex;align-items:center;justify-content:center;margin:0 auto 8px"><svg width="18" height="18" fill="none" stroke="#1a7a4a" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
+          <div style="font-size:12px;font-weight:700">Agendar</div><div style="font-size:10px;color:var(--t3)">Nova consulta</div>
+        </div>
+      </div>
+      <div class="card" style="margin:0;cursor:pointer" onclick="goTo('s-sd-enc')">
+        <div class="card-body" style="text-align:center;padding:16px 10px">
+          <div style="width:36px;height:36px;background:var(--blu-b);border-radius:10px;display:flex;align-items:center;justify-content:center;margin:0 auto 8px"><svg width="18" height="18" fill="none" stroke="#2563eb" stroke-width="2" viewBox="0 0 24 24"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/></svg></div>
+          <div style="font-size:12px;font-weight:700">Encaminhar</div><div style="font-size:10px;color:var(--t3)">Especialista</div>
+        </div>
+      </div>
+      <div class="card" style="margin:0;cursor:pointer" onclick="goTo('s-sd-visitas')">
+        <div class="card-body" style="text-align:center;padding:16px 10px">
+          <div style="width:36px;height:36px;background:var(--yel-b);border-radius:10px;display:flex;align-items:center;justify-content:center;margin:0 auto 8px"><svg width="18" height="18" fill="none" stroke="#d97706" stroke-width="2" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg></div>
+          <div style="font-size:12px;font-weight:700">Visitas</div><div style="font-size:10px;color:var(--t3)">Domiciliares</div>
+        </div>
+      </div>
+      <div class="card" style="margin:0;cursor:pointer" onclick="goTo('s-sd-vacina')">
+        <div class="card-body" style="text-align:center;padding:16px 10px">
+          <div style="width:36px;height:36px;background:var(--red-b);border-radius:10px;display:flex;align-items:center;justify-content:center;margin:0 auto 8px"><svg width="18" height="18" fill="none" stroke="#dc2626" stroke-width="2" viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></div>
+          <div style="font-size:12px;font-weight:700">Vacinação</div><div style="font-size:10px;color:var(--t3)">7 atrasadas</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="bottom-nav">
+    <button class="bn-item active"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg><span class="bn-label">Home</span></button>
+    <button class="bn-item" onclick="goTo('s-sd-consultas')"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg><span class="bn-label">Consultas</span></button>
+    <button class="bn-item" onclick="goTo('s-sd-enc')"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/></svg><span class="bn-label">Encam.</span></button>
+    <button class="bn-item" onclick="goTo('s-sd-vacina')"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg><span class="bn-label">Vacinas</span><span class="bn-badge" style="background:var(--yel)">7</span></button>
+    <button class="bn-item" onclick="goTo('s-sd-alerts')"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg><span class="bn-label">Alertas</span><span class="bn-badge">3</span></button>
+  </div>
+</div>
+
+<!-- SAUDE: CONSULTAS -->
+<div class="screen" id="s-sd-consultas">
+  <div class="topbar">
+    <div class="topbar-left">
+      <div class="back-btn" onclick="goBack()"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></div>
+      <div class="topbar-title">Consultas</div>
+    </div>
+    <div class="topbar-right">
+      <button class="btn btn-primary" style="width:auto;padding:8px 14px;margin:0;font-size:13px" onclick="openModal('m-agendar')">+ Agendar</button>
+    </div>
+  </div>
+  <div class="page-content">
+    <div class="stats-2" style="grid-template-columns:repeat(4,1fr)">
+      <div class="stat-card" style="padding:10px 8px"><div class="stat-label" style="font-size:9px">Hoje</div><div class="stat-value" style="font-size:20px">4</div></div>
+      <div class="stat-card" style="padding:10px 8px"><div class="stat-label" style="font-size:9px">Faltas</div><div class="stat-value c-red" style="font-size:20px">2</div></div>
+      <div class="stat-card" style="padding:10px 8px"><div class="stat-label" style="font-size:9px">Semana</div><div class="stat-value c-green" style="font-size:20px">17</div></div>
+      <div class="stat-card" style="padding:10px 8px"><div class="stat-label" style="font-size:9px">30 dias</div><div class="stat-value c-yel" style="font-size:20px">23</div></div>
+    </div>
+    <div class="consult-item ci-faltou" onclick="goTo('s-sd-paciente')">
+      <div class="ci-top"><div class="ci-name">Luana Silva · 3 anos</div><span class="li-badge badge-yel">Faltou</span></div>
+      <div class="ci-meta">Via CRAS Ibura · Vacinação atrasada</div>
+      <div class="ci-foot"><span class="ci-time">15/05 · 10h30</span><span class="tag">Urgente</span></div>
+    </div>
+    <div class="consult-item ci-faltou" onclick="goTo('s-sd-paciente')">
+      <div class="ci-top"><div class="ci-name">João Gomes · 7 anos</div><span class="li-badge badge-yel">Faltou</span></div>
+      <div class="ci-meta">Via Escola EMEF Ibura · Consulta pendente</div>
+      <div class="ci-foot"><span class="ci-time">15/05 · 08h00</span><span class="tag">Rotina</span></div>
+    </div>
+    <div class="consult-item ci-agendada" onclick="goTo('s-sd-paciente')">
+      <div class="ci-top"><div class="ci-name">Carlos Ramos · 5 anos</div><span class="li-badge badge-blu">Agendada</span></div>
+      <div class="ci-meta">Via CRAS Jordão · Suspeita de desnutrição</div>
+      <div class="ci-foot"><span class="ci-time">15/05 · 14h00</span><span class="tag">Retorno</span></div>
+    </div>
+    <div class="consult-item ci-agendada" onclick="goTo('s-sd-paciente')">
+      <div class="ci-top"><div class="ci-name">Maria Ferreira · 34 anos</div><span class="li-badge badge-blu">Agendada</span></div>
+      <div class="ci-meta">Via CRAS Ibura · Pré-natal em atraso</div>
+      <div class="ci-foot"><span class="ci-time">15/05 · 16h30</span><span class="tag">Retorno</span></div>
+    </div>
+    <div class="consult-item ci-realizada" onclick="goTo('s-sd-paciente')">
+      <div class="ci-top"><div class="ci-name">Rosa Pereira · 68 anos</div><span class="li-badge badge-green">Realizada</span></div>
+      <div class="ci-meta">Via CRAS Mustardinha · HAS sem acompanhamento</div>
+      <div class="ci-foot"><span class="ci-time">14/05 · 09h00</span><span class="tag">Rotina</span></div>
+    </div>
+    <div class="consult-item ci-urgente" onclick="goTo('s-sd-paciente')">
+      <div class="ci-top"><div class="ci-name">Família Souza · Triagem</div><span class="li-badge badge-gray">Aguardando</span></div>
+      <div class="ci-meta">Via CRAS · Nova família · 3 membros</div>
+      <div class="ci-foot"><span class="ci-time">14/05 · 11h00</span><span class="tag">Especialista</span></div>
+    </div>
+  </div>
+  <div class="bottom-nav">
+    <button class="bn-item" onclick="goTo('s-sd-home')"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg><span class="bn-label">Home</span></button>
+    <button class="bn-item active"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg><span class="bn-label">Consultas</span></button>
+    <button class="bn-item" onclick="goTo('s-sd-enc')"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/></svg><span class="bn-label">Encam.</span></button>
+    <button class="bn-item" onclick="goTo('s-sd-vacina')"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg><span class="bn-label">Vacinas</span></button>
+    <button class="bn-item" onclick="goTo('s-sd-alerts')"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg><span class="bn-label">Alertas</span><span class="bn-badge">3</span></button>
+  </div>
+</div>
+
+<!-- SAUDE: PACIENTE PERFIL -->
+<div class="screen" id="s-sd-paciente">
+  <div class="topbar">
+    <div class="topbar-left">
+      <div class="back-btn" onclick="goBack()"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></div>
+      <div class="topbar-title">Perfil do Paciente</div>
+    </div>
+  </div>
+  <div class="page-content">
+    <div class="profile-hero">
+      <div class="ph-av">LS</div>
+      <div class="ph-name">Luana Silva</div>
+      <div class="ph-meta">3 anos · Feminino · UBS Ibura II</div>
+      <div class="ph-tags"><span class="ph-tag">Urgente</span><span class="ph-tag">Vacinação</span><span class="ph-tag">CRAS Ibura</span></div>
+    </div>
+    <div class="info-grid">
+      <div class="info-item"><div class="info-label">Responsável</div><div class="info-value">Ana Silva</div></div>
+      <div class="info-item"><div class="info-label">Telefone</div><div class="info-value">(81) 99999-0001</div></div>
+      <div class="info-item"><div class="info-label">NIS</div><div class="info-value">1234567890</div></div>
+      <div class="info-item"><div class="info-label">Origem</div><div class="info-value">CRAS Ibura</div></div>
+      <div class="info-item"><div class="info-label">Risco</div><div class="info-value" style="color:var(--red)">Alto</div></div>
+      <div class="info-item"><div class="info-label">Endereço</div><div class="info-value">R. das Palmeiras, 114</div></div>
+    </div>
+    <div class="alert-banner ab-red">
+      <div class="ab-icon"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg></div>
+      <span>Vacinação tríplice viral com 6 semanas de atraso. Família não comparece às consultas.</span>
+    </div>
+    <div class="sec-title">Histórico de Consultas</div>
+    <div class="card">
+      <div class="card-body" style="padding:10px 14px">
+        <div class="history-item">
+          <div class="h-dot" style="background:var(--yel)"></div>
+          <div class="h-info"><div class="h-title">Consulta — Faltou</div><div class="h-date">15/05/2026 · UBS Ibura II</div></div>
+        </div>
+        <div class="history-item">
+          <div class="h-dot" style="background:var(--yel)"></div>
+          <div class="h-info"><div class="h-title">Consulta — Faltou</div><div class="h-date">01/05/2026 · UBS Ibura II</div></div>
+        </div>
+        <div class="history-item">
+          <div class="h-dot" style="background:var(--green)"></div>
+          <div class="h-info"><div class="h-title">Consulta realizada — Rotina</div><div class="h-date">15/04/2026 · UBS Ibura II</div></div>
+        </div>
+        <div class="history-item">
+          <div class="h-dot" style="background:var(--green)"></div>
+          <div class="h-info"><div class="h-title">Encaminhamento recebido — CRAS</div><div class="h-date">10/04/2026 · CRAS Ibura</div></div>
+        </div>
+      </div>
+    </div>
+    <button class="btn btn-primary" onclick="openModal('m-agendar')">
+      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      Remarcar Consulta
+    </button>
+    <button class="btn btn-secondary" onclick="openModal('m-enc-form')">Encaminhar Especialista</button>
+    <button class="btn btn-secondary" onclick="goTo('s-sd-visitas')">Solicitar Visita Domiciliar</button>
+  </div>
+</div>
+
+<!-- SAUDE: ENCAMINHAMENTOS -->
+<div class="screen" id="s-sd-enc">
+  <div class="topbar">
+    <div class="topbar-left">
+      <div class="back-btn" onclick="goBack()"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></div>
+      <div class="topbar-title">Encaminhamentos</div>
+    </div>
+    <div class="topbar-right">
+      <button class="btn btn-primary" style="width:auto;padding:8px 14px;margin:0;font-size:13px" onclick="openModal('m-enc-form')">+ Novo</button>
+    </div>
+  </div>
+  <div class="page-content">
+    <div class="stats-2" style="grid-template-columns:repeat(4,1fr)">
+      <div class="stat-card" style="padding:10px 8px"><div class="stat-label" style="font-size:9px">Ativos</div><div class="stat-value" style="font-size:20px">12</div></div>
+      <div class="stat-card" style="padding:10px 8px"><div class="stat-label" style="font-size:9px">Aguard.</div><div class="stat-value c-yel" style="font-size:20px">5</div></div>
+      <div class="stat-card" style="padding:10px 8px"><div class="stat-label" style="font-size:9px">Em And.</div><div class="stat-value c-blu" style="font-size:20px">4</div></div>
+      <div class="stat-card" style="padding:10px 8px"><div class="stat-label" style="font-size:9px">Concluídos</div><div class="stat-value c-green" style="font-size:20px">19</div></div>
+    </div>
+    <div class="enc-item">
+      <div class="enc-top"><div class="enc-name">João Gomes · 7 anos</div><span class="li-badge badge-red">Urgente</span></div>
+      <div class="enc-spec">CAPS Infantil – Psicologia</div>
+      <div class="enc-foot"><span class="li-badge badge-yel">Aguardando</span><span style="font-size:11px;color:var(--t3)">11/05</span></div>
+    </div>
+    <div class="enc-item">
+      <div class="enc-top"><div class="enc-name">Carlos Ramos · 5 anos</div><span class="li-badge badge-red">Urgente</span></div>
+      <div class="enc-spec">NASF – Nutrição</div>
+      <div class="enc-foot"><span class="li-badge badge-yel">Aguardando</span><span style="font-size:11px;color:var(--t3)">13/05</span></div>
+    </div>
+    <div class="enc-item">
+      <div class="enc-top"><div class="enc-name">Maria Ferreira · 34 anos</div><span class="li-badge badge-yel">Médio</span></div>
+      <div class="enc-spec">Ginecologia / Pré-natal</div>
+      <div class="enc-foot"><span class="li-badge badge-blu">Em Andamento</span><span style="font-size:11px;color:var(--t3)">01/05</span></div>
+    </div>
+    <div class="enc-item">
+      <div class="enc-top"><div class="enc-name">Rosa Pereira · 68 anos</div><span class="li-badge badge-yel">Médio</span></div>
+      <div class="enc-spec">Cardiologia</div>
+      <div class="enc-foot"><span class="li-badge badge-blu">Em Andamento</span><span style="font-size:11px;color:var(--t3)">03/05</span></div>
+    </div>
+    <div class="enc-item" style="opacity:.6">
+      <div class="enc-top"><div class="enc-name">Pedro Alves · 4 anos</div><span class="li-badge badge-green">Concluído</span></div>
+      <div class="enc-spec">Pediatria</div>
+      <div class="enc-foot"><span style="font-size:11px;color:var(--t3)">Concluído em 10/05</span></div>
+    </div>
+  </div>
+  <div class="bottom-nav">
+    <button class="bn-item" onclick="goTo('s-sd-home')"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg><span class="bn-label">Home</span></button>
+    <button class="bn-item" onclick="goTo('s-sd-consultas')"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/></svg><span class="bn-label">Consultas</span></button>
+    <button class="bn-item active"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/></svg><span class="bn-label">Encam.</span></button>
+    <button class="bn-item" onclick="goTo('s-sd-vacina')"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg><span class="bn-label">Vacinas</span></button>
+    <button class="bn-item" onclick="goTo('s-sd-alerts')"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg><span class="bn-label">Alertas</span><span class="bn-badge">3</span></button>
+  </div>
+</div>
+
+<!-- SAUDE: VACINAÇÃO -->
+<div class="screen" id="s-sd-vacina">
+  <div class="topbar">
+    <div class="topbar-left">
+      <div class="back-btn" onclick="goBack()"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></div>
+      <div class="topbar-title">Controle de Vacinação</div>
+    </div>
+  </div>
+  <div class="page-content">
+    <div class="stats-2">
+      <div class="stat-card"><div class="stat-label">Atrasadas</div><div class="stat-value c-red">7</div><div class="stat-sub">Famílias sem atualização</div></div>
+      <div class="stat-card"><div class="stat-label">Em Dia</div><div class="stat-value c-green">18</div><div class="stat-sub">Carteira atualizada</div></div>
+    </div>
+    <div class="alert-banner ab-yel">
+      <div class="ab-icon"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg></div>
+      <span>7 famílias com vacinação em atraso. Considere visita domiciliar para casos críticos.</span>
+    </div>
+    <div class="sec-title">Vacinação Atrasada</div>
+    <div class="vac-item">
+      <div class="vac-icon" style="background:var(--red-b)"><svg width="18" height="18" fill="none" stroke="#dc2626" stroke-width="2" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg></div>
+      <div class="vac-info"><div class="vac-name">Luana Silva · 3 anos</div><div class="vac-meta">Tríplice viral · 6 semanas de atraso</div></div>
+      <span class="li-badge badge-red">Crítico</span>
+    </div>
+    <div class="vac-item">
+      <div class="vac-icon" style="background:var(--yel-b)"><svg width="18" height="18" fill="none" stroke="#d97706" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div>
+      <div class="vac-info"><div class="vac-name">Carlos Ramos · 5 anos</div><div class="vac-meta">DTP · 3 semanas de atraso</div></div>
+      <span class="li-badge badge-yel">Atenção</span>
+    </div>
+    <div class="vac-item">
+      <div class="vac-icon" style="background:var(--yel-b)"><svg width="18" height="18" fill="none" stroke="#d97706" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div>
+      <div class="vac-info"><div class="vac-name">João Gomes · 7 anos</div><div class="vac-meta">Varicela · 2 semanas de atraso</div></div>
+      <span class="li-badge badge-yel">Atenção</span>
+    </div>
+    <div class="vac-item">
+      <div class="vac-icon" style="background:var(--yel-b)"><svg width="18" height="18" fill="none" stroke="#d97706" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/></svg></div>
+      <div class="vac-info"><div class="vac-name">Família Lima · 2 crianças</div><div class="vac-meta">Hepatite B · 4 semanas</div></div>
+      <span class="li-badge badge-yel">Atenção</span>
+    </div>
+    <div class="sec-title" style="margin-top:4px">Em Dia</div>
+    <div class="vac-item">
+      <div class="vac-icon" style="background:var(--green-l)"><svg width="18" height="18" fill="none" stroke="#1a7a4a" stroke-width="2" viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></div>
+      <div class="vac-info"><div class="vac-name">Pedro Alves · 4 anos</div><div class="vac-meta">Todas as doses em dia</div></div>
+      <span class="li-badge badge-green">OK</span>
+    </div>
+    <div class="vac-item">
+      <div class="vac-icon" style="background:var(--green-l)"><svg width="18" height="18" fill="none" stroke="#1a7a4a" stroke-width="2" viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></div>
+      <div class="vac-info"><div class="vac-name">Rosa Pereira · 68 anos</div><div class="vac-meta">Gripe · Pneumonia · Atualizadas</div></div>
+      <span class="li-badge badge-green">OK</span>
+    </div>
+    <button class="btn btn-primary" style="margin-top:12px" onclick="goTo('s-sd-visitas')">
+      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+      Solicitar Visita para Vacinação
+    </button>
+  </div>
+  <div class="bottom-nav">
+    <button class="bn-item" onclick="goTo('s-sd-home')"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg><span class="bn-label">Home</span></button>
+    <button class="bn-item" onclick="goTo('s-sd-consultas')"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/></svg><span class="bn-label">Consultas</span></button>
+    <button class="bn-item" onclick="goTo('s-sd-enc')"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/></svg><span class="bn-label">Encam.</span></button>
+    <button class="bn-item active"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg><span class="bn-label">Vacinas</span></button>
+    <button class="bn-item" onclick="goTo('s-sd-alerts')"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg><span class="bn-label">Alertas</span><span class="bn-badge">3</span></button>
+  </div>
+</div>
+
+<!-- SAUDE: VISITAS -->
+<div class="screen" id="s-sd-visitas">
+  <div class="topbar">
+    <div class="topbar-left">
+      <div class="back-btn" onclick="goBack()"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></div>
+      <div class="topbar-title">Visitas Domiciliares</div>
+    </div>
+    <div class="topbar-right">
+      <button class="btn btn-primary" style="width:auto;padding:8px 14px;margin:0;font-size:13px" onclick="openModal('m-visita-form')">+ Solicitar</button>
+    </div>
+  </div>
+  <div class="page-content">
+    <div class="stats-2">
+      <div class="stat-card"><div class="stat-label">Agendadas</div><div class="stat-value c-blu">3</div><div class="stat-sub">Próximas</div></div>
+      <div class="stat-card"><div class="stat-label">Urgentes</div><div class="stat-value c-red">1</div><div class="stat-sub">Imediata</div></div>
+    </div>
+    <div class="visit-item vi-urgente">
+      <div class="vi-name">Luana Silva · 3 anos <span class="li-badge badge-red" style="font-size:10px">Urgente</span></div>
+      <div class="vi-addr"><svg width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>R. das Palmeiras, 114 · Ibura</div>
+      <div class="vi-reason">Vacinação tríplice viral em atraso. Família não comparece.</div>
+      <div class="vi-foot"><span class="tag">Hoje</span><span class="tag">ACS: Maria Souza</span></div>
+    </div>
+    <div class="visit-item vi-agendada">
+      <div class="vi-name">Rosa Pereira · 68 anos <span class="li-badge badge-blu" style="font-size:10px">Agendada</span></div>
+      <div class="vi-addr"><svg width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>Av. Mustardinha, 320</div>
+      <div class="vi-reason">HAS sem acompanhamento. Dificuldade de locomoção.</div>
+      <div class="vi-foot"><span class="tag">16/05</span><span class="tag">Enfermeira</span></div>
+    </div>
+    <div class="visit-item vi-agendada">
+      <div class="vi-name">Família Souza <span class="li-badge badge-blu" style="font-size:10px">Agendada</span></div>
+      <div class="vi-addr"><svg width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>R. do Cajueiro, 57 · Ibura</div>
+      <div class="vi-reason">Triagem inicial. Nova família encaminhada pelo CRAS.</div>
+      <div class="vi-foot"><span class="tag">17/05</span><span class="tag">CRAS</span></div>
+    </div>
+    <div class="visit-item vi-realizada">
+      <div class="vi-name">Pedro Alves · 4 anos <span class="li-badge badge-green" style="font-size:10px">Realizada</span></div>
+      <div class="vi-addr"><svg width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>R. Nova Esperança, 88</div>
+      <div class="vi-reason">Vacinação atualizada com sucesso. Mãe orientada.</div>
+      <div class="vi-foot"><span class="tag">13/05</span><span class="tag">Concluída</span></div>
+    </div>
+  </div>
+  <div class="bottom-nav">
+    <button class="bn-item" onclick="goTo('s-sd-home')"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg><span class="bn-label">Home</span></button>
+    <button class="bn-item" onclick="goTo('s-sd-consultas')"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/></svg><span class="bn-label">Consultas</span></button>
+    <button class="bn-item" onclick="goTo('s-sd-enc')"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/></svg><span class="bn-label">Encam.</span></button>
+    <button class="bn-item" onclick="goTo('s-sd-vacina')"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg><span class="bn-label">Vacinas</span></button>
+    <button class="bn-item" onclick="goTo('s-sd-alerts')"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg><span class="bn-label">Alertas</span><span class="bn-badge">3</span></button>
+  </div>
+</div>
+
+<!-- SAUDE: ALERTAS -->
+<div class="screen" id="s-sd-alerts">
+  <div class="topbar">
+    <div class="topbar-left">
+      <div class="back-btn" onclick="goBack()"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></div>
+      <div class="topbar-title">Alertas Clínicos</div>
+    </div>
+  </div>
+  <div class="page-content">
+    <div class="stats-2" style="grid-template-columns:repeat(3,1fr)">
+      <div class="stat-card"><div class="stat-label">Críticos</div><div class="stat-value c-red">3</div></div>
+      <div class="stat-card"><div class="stat-label">Médios</div><div class="stat-value c-yel">5</div></div>
+      <div class="stat-card"><div class="stat-label">Resolv.</div><div class="stat-value c-green">14</div></div>
+    </div>
+    <div class="alert-item">
+      <div class="ai-stripe" style="background:var(--red)"></div>
+      <div class="ai-body">
+        <div class="ai-title">Vacinação em Atraso — Luana Silva</div>
+        <div class="ai-desc">Tríplice viral com 6 semanas de atraso. Família não comparece às consultas agendadas.</div>
+        <div class="ai-foot"><span class="ai-tag">Crítico</span><span class="ai-tag">Vacinação</span><span class="ai-time">Hoje</span></div>
+      </div>
+    </div>
+    <div class="alert-item">
+      <div class="ai-stripe" style="background:var(--red)"></div>
+      <div class="ai-body">
+        <div class="ai-title">Suspeita de Desnutrição — Carlos Ramos</div>
+        <div class="ai-desc">Peso abaixo da curva. Necessita avaliação nutricional urgente e encaminhamento ao NASF.</div>
+        <div class="ai-foot"><span class="ai-tag">Crítico</span><span class="ai-tag">Nutrição</span><span class="ai-time">Há 1 dia</span></div>
+      </div>
+    </div>
+    <div class="alert-item">
+      <div class="ai-stripe" style="background:var(--red)"></div>
+      <div class="ai-body">
+        <div class="ai-title">Consulta Urgente — João Gomes</div>
+        <div class="ai-desc">Segunda falta consecutiva. Suspeita de negligência familiar.</div>
+        <div class="ai-foot"><span class="ai-tag">Crítico</span><span class="ai-tag">Falta</span><span class="ai-time">Hoje</span></div>
+      </div>
+    </div>
+    <div class="alert-item">
+      <div class="ai-stripe" style="background:var(--yel)"></div>
+      <div class="ai-body">
+        <div class="ai-title">Pré-natal Irregular — Maria Ferreira</div>
+        <div class="ai-desc">2 consultas de pré-natal perdidas consecutivamente. Gestação de 20 semanas.</div>
+        <div class="ai-foot"><span class="ai-tag">Médio</span><span class="ai-tag">Pré-natal</span><span class="ai-time">Há 2 dias</span></div>
+      </div>
+    </div>
+    <div class="alert-item">
+      <div class="ai-stripe" style="background:var(--yel)"></div>
+      <div class="ai-body">
+        <div class="ai-title">Acompanhamento Psicológico — João Gomes</div>
+        <div class="ai-desc">Solicitação ainda sem agendamento. Aguarda vaga no CAPS Infantil.</div>
+        <div class="ai-foot"><span class="ai-tag">Médio</span><span class="ai-tag">Saúde Mental</span><span class="ai-time">Há 4 dias</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="bottom-nav">
+    <button class="bn-item" onclick="goTo('s-sd-home')"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg><span class="bn-label">Home</span></button>
+    <button class="bn-item" onclick="goTo('s-sd-consultas')"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/></svg><span class="bn-label">Consultas</span></button>
+    <button class="bn-item" onclick="goTo('s-sd-enc')"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/></svg><span class="bn-label">Encam.</span></button>
+    <button class="bn-item" onclick="goTo('s-sd-vacina')"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg><span class="bn-label">Vacinas</span></button>
+    <button class="bn-item active"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg><span class="bn-label">Alertas</span></button>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════ -->
+<!--  ÁREA: ESCOLAR                          -->
+<!-- ════════════════════════════════════════ -->
+
+<!-- ESCOLAR: HOME -->
+<div class="screen" id="s-ec-home">
+  <div class="topbar">
+    <div class="topbar-left">
+      <div>
+        <div class="topbar-title">Bom dia, Diretora Paula.</div>
+        <div class="topbar-subtitle">EMEF Ibura · Gestão Escolar</div>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <div class="notif" onclick="goTo('s-ec-alerts')"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><div class="notif-dot"></div></div>
+      <div class="av" onclick="doLogout()">PL</div>
+    </div>
+  </div>
+  <div class="page-content">
+    <div class="alert-banner ab-red">
+      <div class="ab-icon"><svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg></div>
+      <span><strong>2 alunos</strong> em risco de evasão escolar esta semana.</span>
+    </div>
+    <div class="stats-4">
+      <div class="stat-card"><div class="stat-label">Alunos</div><div class="stat-value c-green">312</div><div class="stat-sub">Matriculados</div></div>
+      <div class="stat-card"><div class="stat-label">Risco</div><div class="stat-value c-red">5</div><div class="stat-sub">Evasão</div></div>
+      <div class="stat-card"><div class="stat-label">Faltas</div><div class="stat-value c-yel">18</div><div class="stat-sub">Esta semana</div></div>
+      <div class="stat-card"><div class="stat-label">Freq.</div><div class="stat-value c-blu">87%</div><div class="stat-sub">Média geral</div></div>
+    </div>
+    <div class="sec-title">Alunos em Risco <span class="sec-link" onclick="goTo('s-ec-alunos')">Ver todos →</span></div>
+    <div class="list-item" onclick="goTo('s-ec-aluno')">
+      <div class="li-av" style="background:#dc2626">JG</div>
+      <div class="li-info"><div class="li-name">João Gomes · 7 anos</div><div class="li-sub">3º Ano A · 8 faltas consecutivas</div></div>
+      <div class="li-right"><span class="li-badge badge-red">Evasão</span></div>
+    </div>
+    <div class="list-item" onclick="goTo('s-ec-aluno')">
+      <div class="li-av" style="background:#d97706">LS</div>
+      <div class="li-info"><div class="li-name">Luana Silva · 3 anos</div><div class="li-sub">Pré I · 5 faltas no mês</div></div>
+      <div class="li-right"><span class="li-badge badge-yel">Atenção</span></div>
+    </div>
+    <div class="list-item" onclick="goTo('s-ec-aluno')">
+      <div class="li-av" style="background:#7c3aed">CR</div>
+      <div class="li-info"><div class="li-name">Carlos Ramos · 5 anos</div><div class="li-sub">1º Ano B · Queda de desempenho</div></div>
+      <div class="li-right"><span class="li-badge badge-yel">Atenção</span></div>
+    </div>
+    <div class="divider"></div>
+    <div class="sec-title">Ações Rápidas</div>
+    <div class="row-2" style="gap:10px;margin-bottom:12px">
+      <div class="card" style="margin:0;cursor:pointer" onclick="openModal('m-falta-form')">
+        <div class="card-body" style="text-align:center;padding:16px 10px">
+          <div style="width:36px;height:36px;background:var(--red-b);border-radius:10px;display:flex;align-items:center;justify-content:center;margin:0 auto 8px"><svg width="18" height="18" fill="none" stroke="#dc2626" stroke-width="2" viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg></div>
+          <div style="font-size:12px;font-weight:700">Registrar Falta</div>
+          <div style="font-size:10px;color:var(--t3)">Lançar falta</div>
+        </div>
+      </div>
+      <div class="card" style="margin:0;cursor:pointer" onclick="openModal('m-enc-form')">
+        <div class="card-body" style="text-align:center;padding:16px 10px">
+          <div style="width:36px;height:36px;background:var(--yel-b);border-radius:10px;display:flex;align-items:center;justify-content:center;margin:0 auto 8px"><svg width="18" height="18" fill="none" stroke="#d97706" stroke-width="2" viewBox="0 0 24 24"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/></svg></div>
+          <div style="font-size:12px;font-weight:700">Encaminhar</div>
+          <div style="font-size:10px;color:var(--t3)">Para CRAS/Saúde</div>
+        </div>
+      </div>
+      <div class="card" style="margin:0;cursor:pointer" onclick="goTo('s-ec-alunos')">
+        <div class="card-body" style="text-align:center;padding:16px 10px">
+          <div style="width:36px;height:36px;background:var(--blu-b);border-radius:10px;display:flex;align-items:center;justify-content:center;margin:0 auto 8px"><svg width="18" height="18" fill="none" stroke="#2563eb" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div>
+          <div style="font-size:12px;font-weight:700">Alunos</div>
+          <div style="font-size:10px;color:var(--t3)">Lista completa</div>
+        </div>
+      </div>
+      <div class="card" style="margin:0;cursor:pointer" onclick="goTo('s-ec-alerts')">
+        <div class="card-body" style="text-align:center;padding:16px 10px">
+          <div style="width:36px;height:36px;background:var(--red-b);border-radius:10px;display:flex;align-items:center;justify-content:center;margin:0 auto 8px"><svg width="18" height="18" fill="none" stroke="#dc2626" stroke-width="2" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg></div>
+          <div style="font-size:12px;font-weight:700">Alertas</div>
+          <div style="font-size:10px;color:var(--t3)">4 pendentes</div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header"><div class="card-title">Frequência Semanal</div></div>
+      <div class="card-body">
+        <div class="bars">
+          <div class="bar-wrap"><div class="bar bar-g" style="height:55px"></div><div class="bar-lbl">SEG</div></div>
+          <div class="bar-wrap"><div class="bar bar-g" style="height:48px"></div><div class="bar-lbl">TER</div></div>
+          <div class="bar-wrap"><div class="bar bar-g" style="height:52px"></div><div class="bar-lbl">QUA</div></div>
+          <div class="bar-wrap"><div class="bar bar-e" style="height:38px"></div><div class="bar-lbl">QUI</div></div>
+          <div class="bar-wrap"><div class="bar bar-e" style="height:30px"></div><div class="bar-lbl">SEX</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="bottom-nav">
+    <button class="bn-item active"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg><span class="bn-label">Home</span></button>
+    <button class="bn-item" onclick="goTo('s-ec-alunos')"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg><span class="bn-label">Alunos</span></button>
+    <button class="bn-item" onclick="goTo('s-ec-enc')"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/></svg><span class="bn-label">Encam.</span></button>
+    <button class="bn-item" onclick="goTo('s-ec-alerts')"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg><span class="bn-label">Alertas</span><span class="bn-badge">4</span></button>
+  </div>
+</div>
+
+<!-- ESCOLAR: ALUNOS -->
+<div class="screen" id="s-ec-alunos">
+  <div class="topbar">
+    <div class="topbar-left">
+      <div class="back-btn" onclick="goBack()"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></div>
+      <div class="topbar-title">Lista de Alunos</div>
+    </div>
+  </div>
+  <div class="page-content">
+    <div class="list-item" onclick="goTo('s-ec-aluno')">
+      <div class="li-av" style="background:#dc2626">JG</div>
+      <div class="li-info"><div class="li-name">João Gomes · 7 anos</div><div class="li-sub">3º Ano A · 8 faltas · Evasão</div></div>
+      <div class="li-right"><span class="li-badge badge-red">Evasão</span></div>
+    </div>
+    <div class="list-item" onclick="goTo('s-ec-aluno')">
+      <div class="li-av" style="background:#d97706">LS</div>
+      <div class="li-info"><div class="li-name">Luana Silva · 3 anos</div><div class="li-sub">Pré I · 5 faltas</div></div>
+      <div class="li-right"><span class="li-badge badge-yel">Atenção</span></div>
+    </div>
+    <div class="list-item" onclick="goTo('s-ec-aluno')">
+      <div class="li-av" style="background:#7c3aed">CR</div>
+      <div class="li-info"><div class="li-name">Carlos Ramos · 5 anos</div><div class="li-sub">1º Ano B · Desnutrição</div></div>
+      <div class="li-right"><span class="li-badge badge-yel">Atenção</span></div>
+    </div>
+    <div class="list-item" onclick="goTo('s-ec-aluno')">
+      <div class="li-av" style="background:#1a7a4a">PA</div>
+      <div class="li-info"><div class="li-name">Pedro Alves · 4 anos</div><div class="li-sub">Pré II · Frequência regular</div></div>
+      <div class="li-right"><span class="li-badge badge-green">Regular</span></div>
+    </div>
+    <div class="list-item" onclick="goTo('s-ec-aluno')">
+      <div class="li-av" style="background:#2563eb">MA</div>
+      <div class="li-info"><div class="li-name">Maria Alves · 6 anos</div><div class="li-sub">2º Ano C · Frequência regular</div></div>
+      <div class="li-right"><span class="li-badge badge-green">Regular</span></div>
+    </div>
+    <div class="list-item" onclick="goTo('s-ec-aluno')">
+      <div class="li-av" style="background:#0891b2">TS</div>
+      <div class="li-info"><div class="li-name">Tiago Santos · 8 anos</div><div class="li-sub">4º Ano A · Queda de notas</div></div>
+      <div class="li-right"><span class="li-badge badge-yel">Atenção</span></div>
+    </div>
+    <div class="list-item" onclick="goTo('s-ec-aluno')">
+      <div class="li-av" style="background:#059669">BN</div>
+      <div class="li-info"><div class="li-name">Bruna Neto · 9 anos</div><div class="li-sub">4º Ano B · Frequência regular</div></div>
+      <div class="li-right"><span class="li-badge badge-green">Regular</span></div>
+    </div>
+  </div>
+  <div class="bottom-nav">
+    <button class="bn-item" onclick="goTo('s-ec-home')"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg><span class="bn-label">Home</span></button>
+    <button class="bn-item active"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg><span class="bn-label">Alunos</span></button>
+    <button class="bn-item" onclick="goTo('s-ec-enc')"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/></svg><span class="bn-label">Encam.</span></button>
+    <button class="bn-item" onclick="goTo('s-ec-alerts')"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg><span class="bn-label">Alertas</span><span class="bn-badge">4</span></button>
+  </div>
+</div>
+
+<!-- ESCOLAR: ALUNO PERFIL -->
+<div class="screen" id="s-ec-aluno">
+  <div class="topbar">
+    <div class="topbar-left">
+      <div class="back-btn" onclick="goBack()"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></div>
+      <div class="topbar-title">Perfil do Aluno</div>
+    </div>
+  </div>
+  <div class="page-content">
+    <div class="profile-hero">
+      <div class="ph-av">JG</div>
+      <div class="ph-name">João Gomes</div>
+      <div class="ph-meta">7 anos · 3º Ano A · EMEF Ibura</div>
+      <div class="ph-tags"><span class="ph-tag">Risco de Evasão</span><span class="ph-tag">8 Faltas</span></div>
+    </div>
+    <div class="info-grid">
+      <div class="info-item"><div class="info-label">Responsável</div><div class="info-value">Sandra Gomes</div></div>
+      <div class="info-item"><div class="info-label">Telefone</div><div class="info-value">(81) 99999-0002</div></div>
+      <div class="info-item"><div class="info-label">NIS</div><div class="info-value">9876543210</div></div>
+      <div class="info-item"><div class="info-label">Frequência</div><div class="info-value" style="color:var(--red)">61%</div></div>
+      <div class="info-item"><div class="info-label">Série</div><div class="info-value">3º Ano A</div></div>
+      <div class="info-item"><div class="info-label">Turno</div><div class="info-value">Manhã</div></div>
+    </div>
+    <div class="alert-banner ab-red">
+      <div class="ab-icon"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg></div>
+      <span>8 faltas consecutivas. Suspeita de negligência familiar. Ação imediata necessária.</span>
+    </div>
+    <div class="sec-title">Progresso Escolar</div>
+    <div class="card">
+      <div class="card-body">
+        <div class="prog-row"><span class="prog-label">Português</span><div class="prog-bar-bg"><div class="prog-bar-fill" style="width:55%;background:var(--yel)"></div></div><span class="prog-val">5,5</span></div>
+        <div class="prog-row"><span class="prog-label">Matemática</span><div class="prog-bar-bg"><div class="prog-bar-fill" style="width:40%;background:var(--red)"></div></div><span class="prog-val">4,0</span></div>
+        <div class="prog-row"><span class="prog-label">Ciências</span><div class="prog-bar-bg"><div class="prog-bar-fill" style="width:70%;background:var(--yel)"></div></div><span class="prog-val">7,0</span></div>
+        <div class="prog-row"><span class="prog-label">Frequência</span><div class="prog-bar-bg"><div class="prog-bar-fill" style="width:61%;background:var(--red)"></div></div><span class="prog-val">61%</span></div>
+      </div>
+    </div>
+    <div class="sec-title">Histórico de Ocorrências</div>
+    <div class="card">
+      <div class="card-body" style="padding:10px 14px">
+        <div class="history-item">
+          <div class="h-dot" style="background:var(--red)"></div>
+          <div class="h-info"><div class="h-title">Alerta de evasão gerado</div><div class="h-date">15/05/2026 · Sistema</div></div>
+        </div>
+        <div class="history-item">
+          <div class="h-dot" style="background:var(--yel)"></div>
+          <div class="h-info"><div class="h-title">Falta não justificada — 3ª consecutiva</div><div class="h-date">14/05/2026</div></div>
+        </div>
+        <div class="history-item">
+          <div class="h-dot" style="background:var(--yel)"></div>
+          <div class="h-info"><div class="h-title">Contato com responsável — sem retorno</div><div class="h-date">10/05/2026</div></div>
+        </div>
+        <div class="history-item">
+          <div class="h-dot" style="background:var(--blu)"></div>
+          <div class="h-info"><div class="h-title">Encaminhado para CRAS</div><div class="h-date">05/05/2026</div></div>
+        </div>
+      </div>
+    </div>
+    <button class="btn btn-primary" onclick="openModal('m-enc-form')">
+      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/></svg>
+      Encaminhar para CRAS / Saúde
+    </button>
+    <button class="btn btn-danger" onclick="openModal('m-evasao-form')">Gerar Alerta de Evasão</button>
+    <button class="btn btn-secondary" onclick="openModal('m-falta-form')">Registrar Falta</button>
+  </div>
+</div>
+
+<!-- ESCOLAR: ENCAMINHAMENTOS -->
+<div class="screen" id="s-ec-enc">
+  <div class="topbar">
+    <div class="topbar-left">
+      <div class="back-btn" onclick="goBack()"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></div>
+      <div class="topbar-title">Encaminhamentos</div>
+    </div>
+    <div class="topbar-right">
+      <button class="btn btn-primary" style="width:auto;padding:8px 14px;margin:0;font-size:13px" onclick="openModal('m-enc-form')">+ Novo</button>
+    </div>
+  </div>
+  <div class="page-content">
+    <div class="stats-2" style="grid-template-columns:repeat(3,1fr)">
+      <div class="stat-card"><div class="stat-label">Enviados</div><div class="stat-value c-yel">6</div></div>
+      <div class="stat-card"><div class="stat-label">Em And.</div><div class="stat-value c-blu">3</div></div>
+      <div class="stat-card"><div class="stat-label">Concluídos</div><div class="stat-value c-green">12</div></div>
+    </div>
+    <div class="enc-item">
+      <div class="enc-top"><div class="enc-name">João Gomes · 7 anos</div><span class="li-badge badge-red">Urgente</span></div>
+      <div class="enc-spec">CRAS Ibura – Assistência Social</div>
+      <div class="enc-foot"><span class="li-badge badge-yel">Aguardando</span><span style="font-size:11px;color:var(--t3)">11/05</span></div>
+    </div>
+    <div class="enc-item">
+      <div class="enc-top"><div class="enc-name">Carlos Ramos · 5 anos</div><span class="li-badge badge-red">Urgente</span></div>
+      <div class="enc-spec">UBS Ibura II – Saúde</div>
+      <div class="enc-foot"><span class="li-badge badge-yel">Aguardando</span><span style="font-size:11px;color:var(--t3)">13/05</span></div>
+    </div>
+    <div class="enc-item">
+      <div class="enc-top"><div class="enc-name">Luana Silva · 3 anos</div><span class="li-badge badge-yel">Médio</span></div>
+      <div class="enc-spec">UBS Ibura II – Vacinação</div>
+      <div class="enc-foot"><span class="li-badge badge-blu">Em Andamento</span><span style="font-size:11px;color:var(--t3)">10/05</span></div>
+    </div>
+    <div class="enc-item" style="opacity:.6">
+      <div class="enc-top"><div class="enc-name">Pedro Alves · 4 anos</div><span class="li-badge badge-green">Concluído</span></div>
+      <div class="enc-spec">CRAS – Benefício Social</div>
+      <div class="enc-foot"><span style="font-size:11px;color:var(--t3)">Concluído em 08/05</span></div>
+    </div>
+  </div>
+  <div class="bottom-nav">
+    <button class="bn-item" onclick="goTo('s-ec-home')"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg><span class="bn-label">Home</span></button>
+    <button class="bn-item" onclick="goTo('s-ec-alunos')"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg><span class="bn-label">Alunos</span></button>
+    <button class="bn-item active"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/></svg><span class="bn-label">Encam.</span></button>
+    <button class="bn-item" onclick="goTo('s-ec-alerts')"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg><span class="bn-label">Alertas</span><span class="bn-badge">4</span></button>
+  </div>
+</div>
+
+<!-- ESCOLAR: ALERTAS -->
+<div class="screen" id="s-ec-alerts">
+  <div class="topbar">
+    <div class="topbar-left">
+      <div class="back-btn" onclick="goBack()"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></div>
+      <div class="topbar-title">Alertas Escolares</div>
+    </div>
+  </div>
+  <div class="page-content">
+    <div class="stats-2" style="grid-template-columns:repeat(3,1fr)">
+      <div class="stat-card"><div class="stat-label">Evasão</div><div class="stat-value c-red">2</div></div>
+      <div class="stat-card"><div class="stat-label">Faltas</div><div class="stat-value c-yel">5</div></div>
+      <div class="stat-card"><div class="stat-label">Resolv.</div><div class="stat-value c-green">8</div></div>
+    </div>
+    <div class="alert-item">
+      <div class="ai-stripe" style="background:var(--red)"></div>
+      <div class="ai-body">
+        <div class="ai-title">Risco de Evasão — João Gomes</div>
+        <div class="ai-desc">8 faltas consecutivas. Contato com responsável sem retorno. Suspeita de negligência.</div>
+        <div class="ai-foot"><span class="ai-tag">Crítico</span><span class="ai-tag">Evasão</span><span class="ai-time">Hoje</span></div>
+      </div>
+    </div>
+    <div class="alert-item">
+      <div class="ai-stripe" style="background:var(--red)"></div>
+      <div class="ai-body">
+        <div class="ai-title">Queda de Desempenho — Carlos Ramos</div>
+        <div class="ai-desc">Nota abaixo da média em todas as disciplinas. Suspeita de vulnerabilidade alimentar.</div>
+        <div class="ai-foot"><span class="ai-tag">Crítico</span><span class="ai-tag">Desempenho</span><span class="ai-time">Há 2 dias</span></div>
+      </div>
+    </div>
+    <div class="alert-item">
+      <div class="ai-stripe" style="background:var(--yel)"></div>
+      <div class="ai-body">
+        <div class="ai-title">Faltas Consecutivas — Luana Silva</div>
+        <div class="ai-desc">5 faltas no mês. Família não justificou ausências. Criança de 3 anos.</div>
+        <div class="ai-foot"><span class="ai-tag">Médio</span><span class="ai-tag">Falta</span><span class="ai-time">Há 3 dias</span></div>
+      </div>
+    </div>
+    <div class="alert-item">
+      <div class="ai-stripe" style="background:var(--yel)"></div>
+      <div class="ai-body">
+        <div class="ai-title">Aluno sem Acompanhamento Médico</div>
+        <div class="ai-desc">Tiago Santos — sem atestado médico atualizado. Queda de notas associada.</div>
+        <div class="ai-foot"><span class="ai-tag">Médio</span><span class="ai-tag">Saúde</span><span class="ai-time">Há 4 dias</span></div>
+      </div>
+    </div>
+    <div class="alert-item" style="opacity:.6">
+      <div class="ai-stripe" style="background:var(--green)"></div>
+      <div class="ai-body">
+        <div class="ai-title">Frequência Regularizada — Pedro Alves</div>
+        <div class="ai-desc">Após encaminhamento ao CRAS, família regularizou situação.</div>
+        <div class="ai-foot"><span class="ai-tag">Resolvido</span><span class="ai-time">10/05</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="bottom-nav">
+    <button class="bn-item" onclick="goTo('s-ec-home')"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg><span class="bn-label">Home</span></button>
+    <button class="bn-item" onclick="goTo('s-ec-alunos')"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg><span class="bn-label">Alunos</span></button>
+    <button class="bn-item" onclick="goTo('s-ec-enc')"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/></svg><span class="bn-label">Encam.</span></button>
+    <button class="bn-item active"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg><span class="bn-label">Alertas</span></button>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════ -->
+<!--  MODALS                                  -->
+<!-- ════════════════════════════════════════ -->
+
+<!-- Modal: Agendar Consulta -->
+<div class="modal-overlay" id="m-agendar" onclick="closeModalOutside(event,'m-agendar')">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-title">Agendar Consulta</div>
+    <div class="form-row"><label class="form-label">Paciente / Família</label><input class="form-input" type="text" placeholder="Nome ou CPF"/></div>
+    <div class="row-2" style="gap:8px;margin-bottom:12px">
+      <div><label class="form-label">Data</label><input class="form-input" type="date"/></div>
+      <div><label class="form-label">Horário</label><input class="form-input" type="time"/></div>
+    </div>
+    <div class="form-row"><label class="form-label">Tipo de Consulta</label><select class="form-select"><option>Rotina</option><option>Urgente</option><option>Retorno</option><option>Especialista</option></select></div>
+    <div class="form-row"><label class="form-label">Observações</label><textarea class="form-textarea" placeholder="Motivo da consulta…"></textarea></div>
+    <button class="btn btn-primary" onclick="closeModal('m-agendar')">Confirmar Agendamento</button>
+    <button class="btn btn-secondary" onclick="closeModal('m-agendar')">Cancelar</button>
+  </div>
+</div>
+
+<!-- Modal: Encaminhamento -->
+<div class="modal-overlay" id="m-enc-form" onclick="closeModalOutside(event,'m-enc-form')">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-title">Novo Encaminhamento</div>
+    <div class="form-row"><label class="form-label">Paciente / Família</label><input class="form-input" type="text" placeholder="Nome ou CPF"/></div>
+    <div class="form-row"><label class="form-label">Secretaria / Serviço</label><select class="form-select"><option>CRAS – Assistência Social</option><option>UBS – Saúde</option><option>CAPS Infantil</option><option>NASF – Nutrição</option><option>Escola</option><option>Psicologia</option></select></div>
+    <div class="form-row"><label class="form-label">Prioridade</label><select class="form-select"><option>Urgente</option><option>Médio</option><option>Rotina</option></select></div>
+    <div class="form-row"><label class="form-label">Motivo</label><textarea class="form-textarea" placeholder="Descreva o motivo do encaminhamento…"></textarea></div>
+    <button class="btn btn-primary" onclick="closeModal('m-enc-form')">Enviar Encaminhamento</button>
+    <button class="btn btn-secondary" onclick="closeModal('m-enc-form')">Cancelar</button>
+  </div>
+</div>
+
+<!-- Modal: Registrar Falta -->
+<div class="modal-overlay" id="m-falta-form" onclick="closeModalOutside(event,'m-falta-form')">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-title">Registrar Falta</div>
+    <div class="form-row"><label class="form-label">Aluno</label><input class="form-input" type="text" placeholder="Nome do aluno"/></div>
+    <div class="form-row"><label class="form-label">Data</label><input class="form-input" type="date"/></div>
+    <div class="form-row"><label class="form-label">Justificativa</label><select class="form-select"><option>Não justificada</option><option>Atestado médico</option><option>Evento familiar</option><option>Outro</option></select></div>
+    <div class="form-row"><label class="form-label">Observações</label><textarea class="form-textarea" placeholder="Observações adicionais…"></textarea></div>
+    <button class="btn btn-primary" onclick="closeModal('m-falta-form')">Registrar Falta</button>
+    <button class="btn btn-secondary" onclick="closeModal('m-falta-form')">Cancelar</button>
+  </div>
+</div>
+
+<!-- Modal: Alerta de Evasão -->
+<div class="modal-overlay" id="m-evasao-form" onclick="closeModalOutside(event,'m-evasao-form')">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-title" style="color:var(--red)">⚠ Alerta de Evasão Escolar</div>
+    <div class="alert-banner ab-red" style="margin-bottom:14px">
+      <div class="ab-icon"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg></div>
+      <span>Este alerta será enviado ao CRAS e à Secretaria de Educação.</span>
+    </div>
+    <div class="form-row"><label class="form-label">Aluno</label><input class="form-input" type="text" placeholder="Nome do aluno" value="João Gomes"/></div>
+    <div class="form-row"><label class="form-label">Número de Faltas</label><input class="form-input" type="number" value="8"/></div>
+    <div class="form-row"><label class="form-label">Justificativa para o Alerta</label><textarea class="form-textarea" placeholder="Descreva a situação de risco…"></textarea></div>
+    <button class="btn btn-danger" onclick="closeModal('m-evasao-form')">Gerar Alerta de Evasão</button>
+    <button class="btn btn-secondary" onclick="closeModal('m-evasao-form')">Cancelar</button>
+  </div>
+</div>
+
+<!-- Modal: Solicitar Visita -->
+<div class="modal-overlay" id="m-visita-form" onclick="closeModalOutside(event,'m-visita-form')">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-title">Solicitar Visita Domiciliar</div>
+    <div class="form-row"><label class="form-label">Paciente / Família</label><input class="form-input" type="text" placeholder="Nome ou CPF"/></div>
+    <div class="form-row"><label class="form-label">Endereço Completo</label><input class="form-input" type="text" placeholder="Rua, número, bairro, referência…"/></div>
+    <div class="row-2" style="gap:8px;margin-bottom:12px">
+      <div><label class="form-label">Data Sugerida</label><input class="form-input" type="date"/></div>
+      <div><label class="form-label">Prioridade</label><select class="form-select"><option>Urgente</option><option>Médio</option><option>Rotina</option></select></div>
+    </div>
+    <div class="form-row"><label class="form-label">Motivo</label><select class="form-select"><option>Vacinação em atraso</option><option>Falta às consultas</option><option>Difícil acesso à UBS</option><option>Triagem inicial</option></select></div>
+    <div class="form-row"><label class="form-label">Observações ao ACS</label><textarea class="form-textarea" placeholder="Informações para quem vai realizar a visita…"></textarea></div>
+    <button class="btn btn-primary" onclick="closeModal('m-visita-form')">Solicitar Visita</button>
+    <button class="btn btn-secondary" onclick="closeModal('m-visita-form')">Cancelar</button>
+  </div>
+</div>
+
+<script>
+// ── STATE ──
+let currentScreen = 's-login';
+let history = [];
+
+// ── NAVIGATION ──
+function goTo(id) {
+  const cur = document.getElementById(currentScreen);
+  const next = document.getElementById(id);
+  if (!next) return;
+  if (cur) cur.classList.remove('active');
+  next.classList.add('active');
+  history.push(currentScreen);
+  currentScreen = id;
+  next.querySelector('.page-content') && (next.querySelector('.page-content').scrollTop = 0);
+}
+
+function goBack() {
+  if (history.length === 0) return;
+  const prev = history.pop();
+  const cur = document.getElementById(currentScreen);
+  const prevEl = document.getElementById(prev);
+  if (cur) cur.classList.remove('active');
+  if (prevEl) prevEl.classList.add('active');
+  currentScreen = prev;
+}
+
+// ── LOGIN ──
+function doLogin() {
+  const u = document.getElementById('inp-user').value.trim().toLowerCase();
+  const p = document.getElementById('inp-pass').value.trim().toLowerCase();
+  const err = document.getElementById('login-err');
+  const routes = {
+    'assistente': { pass: 'assistente', screen: 's-as-home' },
+    'saude':      { pass: 'saude',      screen: 's-sd-home' },
+    'escolar':    { pass: 'escolar',    screen: 's-ec-home' }
+  };
+  const route = routes[u];
+  if (route && p === route.pass) {
+    err.style.display = 'none';
+    history = [];
+    goTo(route.screen);
+  } else {
+    err.style.display = 'block';
+    document.getElementById('inp-pass').value = '';
+  }
+}
+
+function doLogout() {
+  history = [];
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('inp-user').value = '';
+  document.getElementById('inp-pass').value = '';
+  document.getElementById('login-err').style.display = 'none';
+  document.getElementById('s-login').classList.add('active');
+  currentScreen = 's-login';
+}
+
+// ── MODALS ──
+function openModal(id) {
+  const m = document.getElementById(id);
+  if (m) m.classList.add('open');
+}
+function closeModal(id) {
+  const m = document.getElementById(id);
+  if (m) m.classList.remove('open');
+}
+function closeModalOutside(e, id) {
+  if (e.target === document.getElementById(id)) closeModal(id);
+}
+
+// Enter key on login
+document.getElementById('inp-pass').addEventListener('keydown', e => {
+  if (e.key === 'Enter') doLogin();
+});
+document.getElementById('inp-user').addEventListener('keydown', e => {
+  if (e.key === 'Enter') document.getElementById('inp-pass').focus();
+});
+</script>
+</body>
+</html>
