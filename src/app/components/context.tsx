@@ -7,14 +7,16 @@ export const C = {
   red: '#dc2626', redB: '#fef2f2',
   yel: '#d97706', yelB: '#fffbeb',
   blu: '#4472D9', bluB: '#eef2fd',
-  // brand gradient
   grad: 'linear-gradient(90deg, #7936C8 0%, #4472D9 50%, #00BFA5 100%)',
   gradDiag: 'linear-gradient(135deg, #7936C8 0%, #4472D9 50%, #00BFA5 100%)',
 }
 
+export type UserRole = 'as' | 'sd' | 'ec'
+
 export interface NavContextType {
   screen: string
   selectedId: string | null
+  role: UserRole | null
   menuOpen: boolean
   goTo: (screen: string) => void
   goToWith: (screen: string, id: string) => void
@@ -23,13 +25,14 @@ export interface NavContextType {
   closeModal: () => void
   openMenu: () => void
   closeMenu: () => void
-  doLogin: (screen: string) => void
+  doLogin: (screen: string, role: UserRole) => void
   doLogout: () => void
 }
 
 export const NavContext = createContext<NavContextType>({
   screen: 's-login',
   selectedId: null,
+  role: null,
   menuOpen: false,
   goTo: () => {},
   goToWith: () => {},

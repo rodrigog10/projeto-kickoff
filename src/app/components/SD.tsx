@@ -218,7 +218,7 @@ export function SDPaciente() {
 
 // ── SD ENCAMINHAMENTOS ──
 export function SDEnc() {
-  const { goBack, openModal } = useNav()
+  const { goBack, goToWith, openModal } = useNav()
   return (
     <DL title="Encaminhamentos" activeScreen="s-sd-enc" onBack={goBack} rightAction={<Btn variant="primary" small onClick={() => openModal('enc')}>+ Novo Encaminhamento</Btn>}>
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr', gap: 14, marginBottom: 24 }}>
@@ -230,16 +230,16 @@ export function SDEnc() {
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20 }}>
         <div>
           <SectionTitle>Aguardando Resposta</SectionTitle>
-          <EncItem name="João Gomes · 7 anos" spec="CAPS Infantil – Psicologia" priority="red" status="yel" date="11/05" />
-          <EncItem name="Carlos Ramos · 5 anos" spec="NASF – Nutrição" priority="red" status="yel" date="13/05" />
-          <EncItem name="Maria Ferreira · 34 anos" spec="Ginecologia / Pré-natal" priority="yel" status="blu" date="01/05" />
-          <EncItem name="Rosa Pereira · 68 anos" spec="Cardiologia" priority="yel" status="blu" date="03/05" />
+          <EncItem name="João Gomes · 7 anos" spec="CAPS Infantil – Psicologia" priority="red" status="yel" date="11/05" onClick={() => goToWith('s-sd-paciente', 'joao')} />
+          <EncItem name="Carlos Ramos · 5 anos" spec="NASF – Nutrição" priority="red" status="yel" date="13/05" onClick={() => goToWith('s-sd-paciente', 'carlos')} />
+          <EncItem name="Maria Ferreira · 34 anos" spec="Ginecologia / Pré-natal" priority="yel" status="blu" date="01/05" onClick={() => goToWith('s-sd-paciente', 'maria')} />
+          <EncItem name="Rosa Pereira · 68 anos" spec="Cardiologia" priority="yel" status="blu" date="03/05" onClick={() => goToWith('s-sd-paciente', 'rosa')} />
         </div>
         <div>
           <SectionTitle>Concluídos Recentes</SectionTitle>
-          <EncItem name="Pedro Alves · 4 anos" spec="Pediatria" priority="green" date="Concluído em 10/05" opacity={0.6} />
-          <EncItem name="Cecília Torres · 32 anos" spec="NASF – Nutrição" priority="green" date="Concluído em 09/05" opacity={0.6} />
-          <EncItem name="Bruno Neto · 28 anos" spec="CAPS – Psiquiatria" priority="green" date="Concluído em 07/05" opacity={0.6} />
+          <EncItem name="Pedro Alves · 4 anos" spec="Pediatria" priority="green" date="Concluído em 10/05" opacity={0.6} onClick={() => goToWith('s-sd-paciente', 'joao')} />
+          <EncItem name="Cecília Torres · 32 anos" spec="NASF – Nutrição" priority="green" date="Concluído em 09/05" opacity={0.6} onClick={() => goToWith('s-sd-paciente', 'rosa')} />
+          <EncItem name="Bruno Neto · 28 anos" spec="CAPS – Psiquiatria" priority="green" date="Concluído em 07/05" opacity={0.6} onClick={() => goToWith('s-sd-paciente', 'souza')} />
         </div>
       </div>
     </DL>
@@ -248,7 +248,7 @@ export function SDEnc() {
 
 // ── SD VACINAÇÃO ──
 export function SDVacina() {
-  const { goBack, goTo } = useNav()
+  const { goBack, goTo, goToWith } = useNav()
   return (
     <DL title="Controle de Vacinação" activeScreen="s-sd-vacina" onBack={goBack} rightAction={<Btn variant="primary" small onClick={() => goTo('s-sd-visitas')}>Solicitar Visita</Btn>}>
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14, marginBottom: 24 }}>
@@ -259,15 +259,15 @@ export function SDVacina() {
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20, marginTop: 8 }}>
         <div>
           <SectionTitle>Vacinação Atrasada</SectionTitle>
-          <VacItem icon={<div style={{ background: C.redB, width: 36, height: 36, borderRadius: 10, display: 'flex', alignItems: 'center', justifyContent: 'center' }}><svg width="18" height="18" fill="none" stroke={C.red} strokeWidth="2" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg></div>} name="Luana Silva · 3 anos" meta="Tríplice viral · 6 semanas de atraso" badge="Crítico" badgeVariant="red" />
-          <VacItem icon={<div style={{ background: C.yelB, width: 36, height: 36, borderRadius: 10, display: 'flex', alignItems: 'center', justifyContent: 'center' }}><svg width="18" height="18" fill="none" stroke={C.yel} strokeWidth="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div>} name="Carlos Ramos · 5 anos" meta="DTP · 3 semanas de atraso" badge="Atenção" badgeVariant="yel" />
-          <VacItem icon={<div style={{ background: C.yelB, width: 36, height: 36, borderRadius: 10, display: 'flex', alignItems: 'center', justifyContent: 'center' }}><svg width="18" height="18" fill="none" stroke={C.yel} strokeWidth="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div>} name="João Gomes · 7 anos" meta="Varicela · 2 semanas de atraso" badge="Atenção" badgeVariant="yel" />
-          <VacItem icon={<div style={{ background: C.yelB, width: 36, height: 36, borderRadius: 10, display: 'flex', alignItems: 'center', justifyContent: 'center' }}><svg width="18" height="18" fill="none" stroke={C.yel} strokeWidth="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/></svg></div>} name="Família Lima · 2 crianças" meta="Hepatite B · 4 semanas" badge="Atenção" badgeVariant="yel" />
+          <VacItem icon={<div style={{ background: C.redB, width: 36, height: 36, borderRadius: 10, display: 'flex', alignItems: 'center', justifyContent: 'center' }}><svg width="18" height="18" fill="none" stroke={C.red} strokeWidth="2" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg></div>} name="Luana Silva · 3 anos" meta="Tríplice viral · 6 semanas de atraso" badge="Crítico" badgeVariant="red" onClick={() => goToWith('s-sd-paciente', 'luana')} />
+          <VacItem icon={<div style={{ background: C.yelB, width: 36, height: 36, borderRadius: 10, display: 'flex', alignItems: 'center', justifyContent: 'center' }}><svg width="18" height="18" fill="none" stroke={C.yel} strokeWidth="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div>} name="Carlos Ramos · 5 anos" meta="DTP · 3 semanas de atraso" badge="Atenção" badgeVariant="yel" onClick={() => goToWith('s-sd-paciente', 'carlos')} />
+          <VacItem icon={<div style={{ background: C.yelB, width: 36, height: 36, borderRadius: 10, display: 'flex', alignItems: 'center', justifyContent: 'center' }}><svg width="18" height="18" fill="none" stroke={C.yel} strokeWidth="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div>} name="João Gomes · 7 anos" meta="Varicela · 2 semanas de atraso" badge="Atenção" badgeVariant="yel" onClick={() => goToWith('s-sd-paciente', 'joao')} />
+          <VacItem icon={<div style={{ background: C.yelB, width: 36, height: 36, borderRadius: 10, display: 'flex', alignItems: 'center', justifyContent: 'center' }}><svg width="18" height="18" fill="none" stroke={C.yel} strokeWidth="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/></svg></div>} name="Família Lima · 2 crianças" meta="Hepatite B · 4 semanas" badge="Atenção" badgeVariant="yel" onClick={() => goToWith('s-sd-paciente', 'souza')} />
         </div>
         <div>
           <SectionTitle>Em Dia</SectionTitle>
-          <VacItem icon={<div style={{ background: C.greenL, width: 36, height: 36, borderRadius: 10, display: 'flex', alignItems: 'center', justifyContent: 'center' }}><svg width="18" height="18" fill="none" stroke={C.green} strokeWidth="2" viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></div>} name="Pedro Alves · 4 anos" meta="Todas as doses em dia" badge="OK" badgeVariant="green" />
-          <VacItem icon={<div style={{ background: C.greenL, width: 36, height: 36, borderRadius: 10, display: 'flex', alignItems: 'center', justifyContent: 'center' }}><svg width="18" height="18" fill="none" stroke={C.green} strokeWidth="2" viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></div>} name="Rosa Pereira · 68 anos" meta="Gripe · Pneumonia · Atualizadas" badge="OK" badgeVariant="green" />
+          <VacItem icon={<div style={{ background: C.greenL, width: 36, height: 36, borderRadius: 10, display: 'flex', alignItems: 'center', justifyContent: 'center' }}><svg width="18" height="18" fill="none" stroke={C.green} strokeWidth="2" viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></div>} name="Pedro Alves · 4 anos" meta="Todas as doses em dia" badge="OK" badgeVariant="green" onClick={() => goToWith('s-sd-paciente', 'joao')} />
+          <VacItem icon={<div style={{ background: C.greenL, width: 36, height: 36, borderRadius: 10, display: 'flex', alignItems: 'center', justifyContent: 'center' }}><svg width="18" height="18" fill="none" stroke={C.green} strokeWidth="2" viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></div>} name="Rosa Pereira · 68 anos" meta="Gripe · Pneumonia · Atualizadas" badge="OK" badgeVariant="green" onClick={() => goToWith('s-sd-paciente', 'rosa')} />
         </div>
       </div>
     </DL>
@@ -276,7 +276,7 @@ export function SDVacina() {
 
 // ── SD VISITAS ──
 export function SDVisitas() {
-  const { goBack, openModal } = useNav()
+  const { goBack, goToWith, openModal } = useNav()
   return (
     <DL title="Visitas Domiciliares" activeScreen="s-sd-visitas" onBack={goBack} rightAction={<Btn variant="primary" small onClick={() => openModal('visita')}>+ Solicitar Visita</Btn>}>
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14, marginBottom: 24 }}>
@@ -286,13 +286,13 @@ export function SDVisitas() {
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20 }}>
         <div>
           <SectionTitle>Pendentes</SectionTitle>
-          <VisitItem variant="urgente" name="Luana Silva · 3 anos" badge={<Badge variant="red">Urgente</Badge>} addr="R. das Palmeiras, 114 · Ibura" reason="Vacinação tríplice viral em atraso. Família não comparece." tags={['Hoje', 'ACS: Maria Souza']} />
-          <VisitItem variant="agendada" name="Rosa Pereira · 68 anos" badge={<Badge variant="blu">Agendada</Badge>} addr="Av. Mustardinha, 320" reason="HAS sem acompanhamento. Dificuldade de locomoção." tags={['16/05', 'Enfermeira']} />
-          <VisitItem variant="agendada" name="Família Souza" badge={<Badge variant="blu">Agendada</Badge>} addr="R. do Cajueiro, 57 · Ibura" reason="Triagem inicial. Nova família encaminhada pelo CRAS." tags={['17/05', 'CRAS']} />
+          <VisitItem variant="urgente" name="Luana Silva · 3 anos" badge={<Badge variant="red">Urgente</Badge>} addr="R. das Palmeiras, 114 · Ibura" reason="Vacinação tríplice viral em atraso. Família não comparece." tags={['Hoje', 'ACS: Maria Souza']} onClick={() => goToWith('s-sd-paciente', 'luana')} />
+          <VisitItem variant="agendada" name="Rosa Pereira · 68 anos" badge={<Badge variant="blu">Agendada</Badge>} addr="Av. Mustardinha, 320" reason="HAS sem acompanhamento. Dificuldade de locomoção." tags={['16/05', 'Enfermeira']} onClick={() => goToWith('s-sd-paciente', 'rosa')} />
+          <VisitItem variant="agendada" name="Família Souza" badge={<Badge variant="blu">Agendada</Badge>} addr="R. do Cajueiro, 57 · Ibura" reason="Triagem inicial. Nova família encaminhada pelo CRAS." tags={['17/05', 'CRAS']} onClick={() => goToWith('s-sd-paciente', 'souza')} />
         </div>
         <div>
           <SectionTitle>Realizadas</SectionTitle>
-          <VisitItem variant="realizada" name="Pedro Alves · 4 anos" badge={<Badge variant="green">Realizada</Badge>} addr="R. Nova Esperança, 88" reason="Vacinação atualizada com sucesso. Mãe orientada." tags={['13/05', 'Concluída']} />
+          <VisitItem variant="realizada" name="Pedro Alves · 4 anos" badge={<Badge variant="green">Realizada</Badge>} addr="R. Nova Esperança, 88" reason="Vacinação atualizada com sucesso. Mãe orientada." tags={['13/05', 'Concluída']} onClick={() => goToWith('s-sd-paciente', 'joao')} />
         </div>
       </div>
     </DL>
@@ -301,7 +301,7 @@ export function SDVisitas() {
 
 // ── SD ALERTAS ──
 export function SDAlerts() {
-  const { goBack } = useNav()
+  const { goBack, goToWith } = useNav()
   return (
     <DL title="Alertas Clínicos" activeScreen="s-sd-alerts" onBack={goBack}>
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 14, marginBottom: 24 }}>
@@ -312,15 +312,15 @@ export function SDAlerts() {
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
         <div>
           <SectionTitle>Críticos</SectionTitle>
-          <AlertItem stripe={C.red} title="Vacinação em Atraso — Luana Silva" desc="Tríplice viral com 6 semanas de atraso. Família não comparece às consultas agendadas." tags={['Crítico', 'Vacinação']} time="Hoje" />
-          <AlertItem stripe={C.red} title="Suspeita de Desnutrição — Carlos Ramos" desc="Peso abaixo da curva. Necessita avaliação nutricional urgente e encaminhamento ao NASF." tags={['Crítico', 'Nutrição']} time="Há 1 dia" />
-          <AlertItem stripe={C.red} title="Consulta Urgente — João Gomes" desc="Segunda falta consecutiva. Suspeita de negligência familiar." tags={['Crítico', 'Falta']} time="Hoje" />
+          <AlertItem stripe={C.red} title="Vacinação em Atraso — Luana Silva" desc="Tríplice viral com 6 semanas de atraso. Família não comparece às consultas agendadas." tags={['Crítico', 'Vacinação']} time="Hoje" onClick={() => goToWith('s-sd-paciente', 'luana')} />
+          <AlertItem stripe={C.red} title="Suspeita de Desnutrição — Carlos Ramos" desc="Peso abaixo da curva. Necessita avaliação nutricional urgente e encaminhamento ao NASF." tags={['Crítico', 'Nutrição']} time="Há 1 dia" onClick={() => goToWith('s-sd-paciente', 'carlos')} />
+          <AlertItem stripe={C.red} title="Consulta Urgente — João Gomes" desc="Segunda falta consecutiva. Suspeita de negligência familiar." tags={['Crítico', 'Falta']} time="Hoje" onClick={() => goToWith('s-sd-paciente', 'joao')} />
         </div>
         <div>
           <SectionTitle>Médios</SectionTitle>
-          <AlertItem stripe={C.yel} title="Pré-natal Irregular — Maria Ferreira" desc="2 consultas de pré-natal perdidas consecutivamente. Gestação de 20 semanas." tags={['Médio', 'Pré-natal']} time="Há 2 dias" />
-          <AlertItem stripe={C.yel} title="Acompanhamento Psicológico — João Gomes" desc="Solicitação ainda sem agendamento. Aguarda vaga no CAPS Infantil." tags={['Médio', 'Saúde Mental']} time="Há 4 dias" />
-          <AlertItem stripe={C.green} title="Vacinação Atualizada — Pedro Alves" desc="Cartão de vacinas atualizado após visita domiciliar." tags={['Resolvido']} time="13/05" opacity={0.6} />
+          <AlertItem stripe={C.yel} title="Pré-natal Irregular — Maria Ferreira" desc="2 consultas de pré-natal perdidas consecutivamente. Gestação de 20 semanas." tags={['Médio', 'Pré-natal']} time="Há 2 dias" onClick={() => goToWith('s-sd-paciente', 'maria')} />
+          <AlertItem stripe={C.yel} title="Acompanhamento Psicológico — João Gomes" desc="Solicitação ainda sem agendamento. Aguarda vaga no CAPS Infantil." tags={['Médio', 'Saúde Mental']} time="Há 4 dias" onClick={() => goToWith('s-sd-paciente', 'joao')} />
+          <AlertItem stripe={C.green} title="Vacinação Atualizada — Pedro Alves" desc="Cartão de vacinas atualizado após visita domiciliar." tags={['Resolvido']} time="13/05" opacity={0.6} onClick={() => goToWith('s-sd-paciente', 'rosa')} />
         </div>
       </div>
     </DL>

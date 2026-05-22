@@ -1,5 +1,5 @@
 import React from 'react'
-import { useNav, C } from './context'
+import { useNav, C, UserRole } from './context'
 
 // ── Icons ──
 const IcoHome = () => <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
@@ -51,8 +51,17 @@ const NAV_SECTIONS: Section[] = [
   },
 ]
 
+const ROLE_KEY: Record<string, UserRole> = { as: 'as', sd: 'sd', ec: 'ec' }
+const SECTION_ROLE: Record<string, UserRole> = {
+  'Assistência Social': 'as',
+  'Saúde': 'sd',
+  'Educação': 'ec',
+}
+
 function Sidebar({ activeScreen }: { activeScreen: string }) {
-  const { goTo, doLogout } = useNav()
+  const { goTo, doLogout, role } = useNav()
+  const visibleSections = NAV_SECTIONS.filter(s => SECTION_ROLE[s.title] === role)
+
   return (
     <div style={{ width: 240, minWidth: 240, background: '#fff', borderRight: `1px solid ${C.bd}`, display: 'flex', flexDirection: 'column', height: '100vh', overflow: 'hidden' }}>
       {/* Logo */}
@@ -63,7 +72,7 @@ function Sidebar({ activeScreen }: { activeScreen: string }) {
 
       {/* Nav */}
       <div style={{ flex: 1, overflowY: 'auto', padding: '12px 10px' }}>
-        {NAV_SECTIONS.map((sec) => (
+        {visibleSections.map((sec) => (
           <div key={sec.title} style={{ marginBottom: 6 }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 7, padding: '6px 10px', marginBottom: 2 }}>
               <div style={{ width: 7, height: 7, borderRadius: '50%', background: sec.color, flexShrink: 0 }} />

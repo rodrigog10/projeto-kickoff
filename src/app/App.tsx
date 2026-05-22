@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { NavContext } from './components/context'
+import { NavContext, UserRole } from './components/context'
 import { LoginScreen } from './components/Login'
 import { ASHome, ASKanban, ASMonitor, ASEnc, ASAlerts, ASFamilia } from './components/AS'
 import { SDHome, SDConsultas, SDPaciente, SDEnc, SDVacina, SDVisitas, SDAlerts } from './components/SD'
@@ -38,6 +38,8 @@ export default function App() {
   const [histStack, setHistStack] = useState<string[]>([])
   const [activeModal, setActiveModal] = useState<string | null>(null)
   const [selectedId, setSelectedId] = useState<string | null>(null)
+  const [role, setRole] = useState<UserRole | null>(null)
+
   function goTo(s: string) {
     setHistStack(h => [...h, screen])
     setScreen(s)
@@ -60,12 +62,14 @@ export default function App() {
     })
   }
 
-  function doLogin(targetScreen: string) {
+  function doLogin(targetScreen: string, userRole: UserRole) {
+    setRole(userRole)
     setHistStack([])
     setScreen(targetScreen)
   }
 
   function doLogout() {
+    setRole(null)
     setHistStack([])
     setScreen('s-login')
     setActiveModal(null)
@@ -80,7 +84,7 @@ export default function App() {
   }
 
   return (
-    <NavContext.Provider value={{ screen, selectedId, menuOpen: false, goTo, goToWith, goBack, openModal, closeModal, openMenu: () => {}, closeMenu: () => {}, doLogin, doLogout }}>
+    <NavContext.Provider value={{ screen, selectedId, role, menuOpen: false, goTo, goToWith, goBack, openModal, closeModal, openMenu: () => {}, closeMenu: () => {}, doLogin, doLogout }}>
       <div className="cv-app">
         {renderScreen(screen)}
         <Modals activeModal={activeModal} />

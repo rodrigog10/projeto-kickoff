@@ -9,15 +9,15 @@ export function LoginScreen() {
   const [error, setError] = useState(false)
 
   function handleLogin() {
-    const routes: Record<string, { pass: string; screen: string }> = {
-      assistente: { pass: 'assistente', screen: 's-as-home' },
-      saude: { pass: 'saude', screen: 's-sd-home' },
-      escolar: { pass: 'escolar', screen: 's-ec-home' },
+    const routes: Record<string, { pass: string; screen: string; role: 'as' | 'sd' | 'ec' }> = {
+      assistente: { pass: 'assistente', screen: 's-as-home', role: 'as' },
+      saude:      { pass: 'saude',      screen: 's-sd-home', role: 'sd' },
+      escolar:    { pass: 'escolar',    screen: 's-ec-home', role: 'ec' },
     }
     const route = routes[user.trim().toLowerCase()]
     if (route && pass.trim().toLowerCase() === route.pass) {
       setError(false)
-      doLogin(route.screen)
+      doLogin(route.screen, route.role)
     } else {
       setError(true)
       setPass('')

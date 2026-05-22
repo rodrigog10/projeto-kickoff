@@ -275,9 +275,9 @@ export function EncItem({ name, spec, priority, status, date, opacity, onClick }
 }
 
 // ── Alert item ──
-export function AlertItem({ stripe, title, desc, tags, time, opacity }: { stripe: string; title: string; desc: string; tags: string[]; time: string; opacity?: number }) {
+export function AlertItem({ stripe, title, desc, tags, time, opacity, onClick }: { stripe: string; title: string; desc: string; tags: string[]; time: string; opacity?: number; onClick?: () => void }) {
   return (
-    <div style={{ background: '#fff', borderRadius: 12, border: `1px solid ${C.bd}`, padding: 13, marginBottom: 8, display: 'flex', gap: 10, opacity }}>
+    <div onClick={onClick} style={{ background: '#fff', borderRadius: 12, border: `1px solid ${C.bd}`, padding: 13, marginBottom: 8, display: 'flex', gap: 10, opacity, cursor: onClick ? 'pointer' : 'default' }}>
       <div style={{ width: 4, borderRadius: 2, background: stripe, flexShrink: 0, alignSelf: 'stretch' }} />
       <div style={{ flex: 1 }}>
         <div style={{ fontSize: 13, fontWeight: 700, color: C.t1, marginBottom: 3 }}>{title}</div>
@@ -313,9 +313,9 @@ export function ConsultItem({ variant, name, meta, time, tag, status, onClick }:
 }
 
 // ── Vacina item ──
-export function VacItem({ icon, name, meta, badge, badgeVariant }: { icon: React.ReactNode; name: string; meta: string; badge: string; badgeVariant: BadgeVariant }) {
+export function VacItem({ icon, name, meta, badge, badgeVariant, onClick }: { icon: React.ReactNode; name: string; meta: string; badge: string; badgeVariant: BadgeVariant; onClick?: () => void }) {
   return (
-    <div style={{ background: '#fff', borderRadius: 12, border: `1px solid ${C.bd}`, padding: 13, marginBottom: 8, display: 'flex', alignItems: 'center', gap: 12 }}>
+    <div onClick={onClick} style={{ background: '#fff', borderRadius: 12, border: `1px solid ${C.bd}`, padding: 13, marginBottom: 8, display: 'flex', alignItems: 'center', gap: 12, cursor: onClick ? 'pointer' : 'default' }}>
       <div style={{ width: 36, height: 36, borderRadius: 10, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>{icon}</div>
       <div style={{ flex: 1 }}>
         <div style={{ fontSize: 13, fontWeight: 700 }}>{name}</div>
@@ -331,9 +331,9 @@ type VisitVariant = 'urgente' | 'agendada' | 'realizada'
 const visitBorderColor: Record<VisitVariant, string> = {
   urgente: C.red, agendada: C.blu, realizada: C.green,
 }
-export function VisitItem({ variant, name, badge, addr, reason, tags }: { variant: VisitVariant; name: string; badge: React.ReactNode; addr: string; reason: string; tags: string[] }) {
+export function VisitItem({ variant, name, badge, addr, reason, tags, onClick }: { variant: VisitVariant; name: string; badge: React.ReactNode; addr: string; reason: string; tags: string[]; onClick?: () => void }) {
   return (
-    <div style={{ background: '#fff', borderRadius: 12, border: `1px solid ${C.bd}`, padding: 13, marginBottom: 8, borderLeft: `4px solid ${visitBorderColor[variant]}` }}>
+    <div onClick={onClick} style={{ background: '#fff', borderRadius: 12, border: `1px solid ${C.bd}`, padding: 13, marginBottom: 8, borderLeft: `4px solid ${visitBorderColor[variant]}`, cursor: onClick ? 'pointer' : 'default' }}>
       <div style={{ fontSize: 13, fontWeight: 700, marginBottom: 4 }}>{name} {badge}</div>
       <div style={{ fontSize: 11, color: C.t2, marginBottom: 4, display: 'flex', alignItems: 'center', gap: 4 }}>
         <svg width="11" height="11" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
