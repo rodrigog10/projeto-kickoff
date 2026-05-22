@@ -82,6 +82,48 @@ const FAMILIAS: Record<string, {
       { color: C.blu, title: 'Triagem agendada na UBS', date: '14/05/2026' },
     ],
   },
+  gomes: {
+    initials: 'JG', name: 'Família Gomes', meta: 'João Gomes · 7 anos · Via EMEF Ibura',
+    tags: ['Risco Alto', 'Evasão Escolar', 'Negligência'],
+    resp: 'Sandra Gomes', tel: '(81) 9 9999-0002', nis: '9876543210',
+    ubs: 'UBS Ibura II', end: 'R. do Cajueiro, 23 · Ibura',
+    alerta: '8 faltas consecutivas na escola. Contato com responsável sem retorno. Suspeita de negligência familiar.',
+    alertVariant: 'red',
+    historico: [
+      { color: C.red, title: 'Alerta de evasão recebido — EMEF Ibura', date: '15/05/2026 · Sistema' },
+      { color: C.yel, title: 'Contato com responsável — sem retorno', date: '10/05/2026' },
+      { color: C.blu, title: 'Encaminhado ao CAPS Infantil – Psicologia', date: '05/05/2026' },
+      { color: C.green, title: 'Cadastro realizado', date: '20/03/2026 · CRAS Ibura' },
+    ],
+  },
+  lima: {
+    initials: 'FL', name: 'Família Lima', meta: '4 membros · Via CRAS Ibura',
+    tags: ['Acompanhamento', 'Benefício Social'],
+    resp: 'Carlos Lima', tel: '(81) 9 9999-0011', nis: '4455667788',
+    ubs: 'UBS Ibura II', end: 'R. das Mangueiras, 78 · Ibura',
+    alerta: 'Família com 2 crianças menores. Benefício Bolsa Família pendente de renovação.',
+    alertVariant: 'yel',
+    historico: [
+      { color: C.yel, title: 'Renovação do Bolsa Família — pendente', date: '10/05/2026' },
+      { color: C.blu, title: 'Vacinação das crianças — em atraso', date: '05/05/2026' },
+      { color: C.green, title: 'Visita domiciliar realizada', date: '01/04/2026' },
+      { color: C.green, title: 'Cadastro realizado', date: '10/01/2026 · CRAS Ibura' },
+    ],
+  },
+  costa: {
+    initials: 'PC', name: 'Família Costa', meta: 'Paulo Costa · 45 anos · Via CAPS',
+    tags: ['Acompanhamento', 'Psiquiatria'],
+    resp: 'Paulo Costa', tel: '(81) 9 9999-0012', nis: '5566778899',
+    ubs: 'UBS Ibura II', end: 'Av. Recife, 330 · Ibura',
+    alerta: 'Paciente em tratamento psiquiátrico. Acompanhamento mensal necessário. Família de suporte presente.',
+    alertVariant: 'yel',
+    historico: [
+      { color: C.green, title: 'Consulta CAPS realizada', date: '12/05/2026' },
+      { color: C.blu, title: 'Medicação renovada', date: '01/05/2026' },
+      { color: C.green, title: 'Avaliação psicológica — estável', date: '01/04/2026' },
+      { color: C.green, title: 'Cadastro no CAPS', date: '15/02/2026' },
+    ],
+  },
 }
 
 // ── Bottom nav for AS ──
@@ -147,21 +189,21 @@ export function ASKanban() {
   const cols = [
     { title: '🔴 Risco Alto', titleColor: C.red, count: 3, cards: [
       { id: 'silva', name: 'Família Silva', sub: 'Luana · 3 anos', tags: ['Vacinação', 'CRAS Ibura'] },
-      { id: 'joao', name: 'Família Gomes', sub: 'João · 7 anos', tags: ['Escola', 'Negligência'] },
+      { id: 'gomes', name: 'Família Gomes', sub: 'João · 7 anos', tags: ['Escola', 'Negligência'] },
       { id: 'ramos', name: 'Família Ramos', sub: 'Carlos · 5 anos', tags: ['Desnutrição'] },
     ]},
     { title: '🟡 Acompanhamento', titleColor: C.yel, count: 5, cards: [
       { id: 'ferreira', name: 'Família Ferreira', sub: 'Maria · 34 anos', tags: ['Pré-natal', 'Gestante'] },
       { id: 'pereira', name: 'Família Pereira', sub: 'Rosa · 68 anos', tags: ['HAS', 'Idoso'] },
       { id: 'souza', name: 'Família Souza', sub: '3 membros', tags: ['Triagem', 'Nova'] },
-      { id: 'silva', name: 'Família Lima', sub: '4 membros', tags: ['Benefício'] },
-      { id: 'ferreira', name: 'Família Costa', sub: 'Paulo · 45 anos', tags: ['Psiquiatria'] },
+      { id: 'lima', name: 'Família Lima', sub: '4 membros', tags: ['Benefício'] },
+      { id: 'costa', name: 'Família Costa', sub: 'Paulo · 45 anos', tags: ['Psiquiatria'] },
     ]},
     { title: '🟢 Resolvidos', titleColor: C.green, count: 4, cards: [
       { id: 'pereira', name: 'Família Alves', sub: 'Pedro · 4 anos', tags: ['Vacinação ✓'] },
       { id: 'ramos', name: 'Família Torres', sub: 'Cecília · 32 anos', tags: ['NASF ✓'] },
-      { id: 'souza', name: 'Família Neto', sub: 'Bruno · 28 anos', tags: ['CAPS ✓'] },
-      { id: 'silva', name: 'Família Melo', sub: '5 membros', tags: ['Benefício ✓'] },
+      { id: 'costa', name: 'Família Neto', sub: 'Bruno · 28 anos', tags: ['CAPS ✓'] },
+      { id: 'lima', name: 'Família Melo', sub: '5 membros', tags: ['Benefício ✓'] },
     ]},
   ]
   return (
