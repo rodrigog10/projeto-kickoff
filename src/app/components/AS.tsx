@@ -7,6 +7,83 @@ import {
   HistoryItem, ProgressRow, BarChart, KanbanCard, Btn, BrandTitle, C
 } from './ui'
 
+// ── Dados das famílias ──
+const FAMILIAS: Record<string, {
+  initials: string; name: string; meta: string; tags: string[]
+  resp: string; tel: string; nis: string; ubs: string; end: string
+  alerta: string; alertVariant: 'red' | 'yel' | 'blu'
+  historico: { color: string; title: string; date: string }[]
+}> = {
+  silva: {
+    initials: 'LS', name: 'Família Silva', meta: 'Luana Silva · 3 anos · Via CRAS Ibura',
+    tags: ['Risco Alto', 'Vacinação', 'CRAS Ibura'],
+    resp: 'Ana Silva', tel: '(81) 9 9999-0001', nis: '1234567890',
+    ubs: 'UBS Ibura II', end: 'R. das Palmeiras, 114 · Ibura',
+    alerta: 'Vacinação tríplice viral com 6 semanas de atraso. Família não comparece às consultas.',
+    alertVariant: 'red',
+    historico: [
+      { color: C.red, title: 'Alerta de vacinação gerado', date: '15/05/2026 · Sistema' },
+      { color: C.yel, title: 'Consulta — faltou', date: '10/05/2026 · UBS Ibura II' },
+      { color: C.yel, title: 'Encaminhamento para pediatria', date: '01/05/2026 · CRAS Ibura' },
+      { color: C.green, title: 'Cadastro realizado', date: '10/04/2026 · CRAS Ibura' },
+    ],
+  },
+  ramos: {
+    initials: 'CR', name: 'Família Ramos', meta: 'Carlos Ramos · 5 anos · Via CRAS Jordão',
+    tags: ['Risco Alto', 'Desnutrição', 'CRAS Jordão'],
+    resp: 'Beatriz Ramos', tel: '(81) 9 9999-0003', nis: '5647382910',
+    ubs: 'UBS Ibura II', end: 'R. Nova Esperança, 45 · Jordão',
+    alerta: 'Suspeita de desnutrição em criança de 5 anos. Encaminhamento ao NASF em andamento.',
+    alertVariant: 'red',
+    historico: [
+      { color: C.red, title: 'Alerta de desnutrição gerado', date: '10/05/2026 · Sistema' },
+      { color: C.blu, title: 'Encaminhado ao NASF – Nutrição', date: '05/05/2026 · CRAS Jordão' },
+      { color: C.yel, title: 'Escola reportou queda de rendimento', date: '02/05/2026 · EMEF Ibura' },
+      { color: C.green, title: 'Cadastro realizado', date: '15/03/2026 · CRAS Jordão' },
+    ],
+  },
+  ferreira: {
+    initials: 'MF', name: 'Família Ferreira', meta: 'Maria Ferreira · 34 anos · Via CRAS Ibura',
+    tags: ['Risco Médio', 'Pré-natal', 'Gestante'],
+    resp: 'Maria Ferreira', tel: '(81) 9 9999-0004', nis: '3021948576',
+    ubs: 'UBS Ibura II', end: 'Av. Recife, 890 · Ibura',
+    alerta: '2 consultas de pré-natal perdidas. Gestação de 20 semanas. Atenção imediata necessária.',
+    alertVariant: 'yel',
+    historico: [
+      { color: C.yel, title: 'Pré-natal — faltou (2ª vez)', date: '15/05/2026 · UBS Ibura II' },
+      { color: C.yel, title: 'Pré-natal — faltou', date: '01/05/2026 · UBS Ibura II' },
+      { color: C.green, title: 'Pré-natal realizado — 16 semanas', date: '10/04/2026 · UBS Ibura II' },
+      { color: C.green, title: 'Cadastro pré-natal realizado', date: '15/03/2026 · CRAS Ibura' },
+    ],
+  },
+  pereira: {
+    initials: 'RP', name: 'Família Pereira', meta: 'Rosa Pereira · 68 anos · Via CRAS Mustardinha',
+    tags: ['Acompanhamento', 'HAS', 'Idosa'],
+    resp: 'Clara Pereira (filha)', tel: '(81) 9 9999-0005', nis: '7654321098',
+    ubs: 'UBS Ibura II', end: 'Av. Mustardinha, 320',
+    alerta: 'Hipertensão arterial sem acompanhamento há 45 dias. Paciente com dificuldade de locomoção.',
+    alertVariant: 'yel',
+    historico: [
+      { color: C.green, title: 'Consulta realizada — Rotina', date: '14/05/2026 · UBS Ibura II' },
+      { color: C.blu, title: 'Visita domiciliar agendada', date: '08/05/2026' },
+      { color: C.blu, title: 'Encaminhamento — Cardiologia', date: '03/04/2026' },
+      { color: C.green, title: 'Cadastro realizado', date: '10/02/2026 · CRAS Mustardinha' },
+    ],
+  },
+  souza: {
+    initials: 'FS', name: 'Família Souza', meta: '3 membros · Nova família · Via CRAS Ibura',
+    tags: ['Triagem', 'Nova Família'],
+    resp: 'Paulo Souza', tel: '(81) 9 9999-0006', nis: 'Pendente',
+    ubs: 'A definir', end: 'R. do Cajueiro, 57 · Ibura',
+    alerta: 'Nova família recém encaminhada. Triagem inicial pendente. 3 membros: adulto + 2 crianças.',
+    alertVariant: 'blu',
+    historico: [
+      { color: C.blu, title: 'Encaminhamento recebido — CRAS Ibura', date: '12/05/2026' },
+      { color: C.blu, title: 'Triagem agendada na UBS', date: '14/05/2026' },
+    ],
+  },
+}
+
 // ── Bottom nav for AS ──
 function ASNav({ active }: { active: string }) {
   const { goTo } = useNav()
@@ -22,7 +99,7 @@ function ASNav({ active }: { active: string }) {
 
 // ── AS HOME ──
 export function ASHome() {
-  const { goTo, doLogout, openModal } = useNav()
+  const { goTo, goToWith, doLogout, openModal } = useNav()
   return (
     <div className="cv-screen">
       <TopBar
@@ -46,9 +123,9 @@ export function ASHome() {
         </StatsGrid>
 
         <SectionTitle link="Ver todos →" onLink={() => goTo('s-as-kanban')}>Casos Críticos</SectionTitle>
-        <ListItem av={<div style={{ width: 38, height: 38, borderRadius: '50%', background: C.red, display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, color: '#fff' }}>LS</div>} name="Família Silva" sub="Luana · 3 anos · Vacinação atrasada" right={<Badge variant="red">Urgente</Badge>} onClick={() => goTo('s-as-familia')} />
-        <ListItem av={<div style={{ width: 38, height: 38, borderRadius: '50%', background: C.yel, display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, color: '#fff' }}>CR</div>} name="Família Ramos" sub="Carlos · 5 anos · Desnutrição" right={<Badge variant="yel">Médio</Badge>} onClick={() => goTo('s-as-familia')} />
-        <ListItem av={<div style={{ width: 38, height: 38, borderRadius: '50%', background: '#7c3aed', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, color: '#fff' }}>MF</div>} name="Família Ferreira" sub="Maria · 34 anos · Pré-natal irregular" right={<Badge variant="yel">Médio</Badge>} onClick={() => goTo('s-as-familia')} />
+        <ListItem av={<div style={{ width: 38, height: 38, borderRadius: '50%', background: C.red, display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, color: '#fff' }}>LS</div>} name="Família Silva" sub="Luana · 3 anos · Vacinação atrasada" right={<Badge variant="red">Urgente</Badge>} onClick={() => goToWith('s-as-familia', 'silva')} />
+        <ListItem av={<div style={{ width: 38, height: 38, borderRadius: '50%', background: C.yel, display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, color: '#fff' }}>CR</div>} name="Família Ramos" sub="Carlos · 5 anos · Desnutrição" right={<Badge variant="yel">Médio</Badge>} onClick={() => goToWith('s-as-familia', 'ramos')} />
+        <ListItem av={<div style={{ width: 38, height: 38, borderRadius: '50%', background: '#7c3aed', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, color: '#fff' }}>MF</div>} name="Família Ferreira" sub="Maria · 34 anos · Pré-natal irregular" right={<Badge variant="yel">Médio</Badge>} onClick={() => goToWith('s-as-familia', 'ferreira')} />
 
         <Divider />
         <SectionTitle>Ações Rápidas</SectionTitle>
@@ -66,25 +143,25 @@ export function ASHome() {
 
 // ── AS KANBAN ──
 export function ASKanban() {
-  const { goBack, goTo } = useNav()
+  const { goBack, goToWith } = useNav()
   const cols = [
     { title: '🔴 Risco Alto', titleColor: C.red, count: 3, cards: [
-      { name: 'Família Silva', sub: 'Luana · 3 anos', tags: ['Vacinação', 'CRAS Ibura'] },
-      { name: 'Família Gomes', sub: 'João · 7 anos', tags: ['Escola', 'Negligência'] },
-      { name: 'Família Ramos', sub: 'Carlos · 5 anos', tags: ['Desnutrição'] },
+      { id: 'silva', name: 'Família Silva', sub: 'Luana · 3 anos', tags: ['Vacinação', 'CRAS Ibura'] },
+      { id: 'joao', name: 'Família Gomes', sub: 'João · 7 anos', tags: ['Escola', 'Negligência'] },
+      { id: 'ramos', name: 'Família Ramos', sub: 'Carlos · 5 anos', tags: ['Desnutrição'] },
     ]},
     { title: '🟡 Acompanhamento', titleColor: C.yel, count: 5, cards: [
-      { name: 'Família Ferreira', sub: 'Maria · 34 anos', tags: ['Pré-natal', 'Gestante'] },
-      { name: 'Família Pereira', sub: 'Rosa · 68 anos', tags: ['HAS', 'Idoso'] },
-      { name: 'Família Souza', sub: '3 membros', tags: ['Triagem', 'Nova'] },
-      { name: 'Família Lima', sub: '4 membros', tags: ['Benefício'] },
-      { name: 'Família Costa', sub: 'Paulo · 45 anos', tags: ['Psiquiatria'] },
+      { id: 'ferreira', name: 'Família Ferreira', sub: 'Maria · 34 anos', tags: ['Pré-natal', 'Gestante'] },
+      { id: 'pereira', name: 'Família Pereira', sub: 'Rosa · 68 anos', tags: ['HAS', 'Idoso'] },
+      { id: 'souza', name: 'Família Souza', sub: '3 membros', tags: ['Triagem', 'Nova'] },
+      { id: 'silva', name: 'Família Lima', sub: '4 membros', tags: ['Benefício'] },
+      { id: 'ferreira', name: 'Família Costa', sub: 'Paulo · 45 anos', tags: ['Psiquiatria'] },
     ]},
     { title: '🟢 Resolvidos', titleColor: C.green, count: 4, cards: [
-      { name: 'Família Alves', sub: 'Pedro · 4 anos', tags: ['Vacinação ✓'] },
-      { name: 'Família Torres', sub: 'Cecília · 32 anos', tags: ['NASF ✓'] },
-      { name: 'Família Neto', sub: 'Bruno · 28 anos', tags: ['CAPS ✓'] },
-      { name: 'Família Melo', sub: '5 membros', tags: ['Benefício ✓'] },
+      { id: 'pereira', name: 'Família Alves', sub: 'Pedro · 4 anos', tags: ['Vacinação ✓'] },
+      { id: 'ramos', name: 'Família Torres', sub: 'Cecília · 32 anos', tags: ['NASF ✓'] },
+      { id: 'souza', name: 'Família Neto', sub: 'Bruno · 28 anos', tags: ['CAPS ✓'] },
+      { id: 'silva', name: 'Família Melo', sub: '5 membros', tags: ['Benefício ✓'] },
     ]},
   ]
   return (
@@ -101,7 +178,7 @@ export function ASKanban() {
               </div>
               <div style={{ padding: 8 }}>
                 {col.cards.map((card, ci2) => (
-                  <KanbanCard key={ci2} name={card.name} sub={card.sub} tags={card.tags} onClick={() => goTo('s-as-familia')} />
+                  <KanbanCard key={ci2} name={card.name} sub={card.sub} tags={card.tags} onClick={() => goToWith('s-as-familia', card.id)} />
                 ))}
               </div>
             </div>
@@ -202,27 +279,25 @@ export function ASAlerts() {
 
 // ── AS FAMÍLIA ──
 export function ASFamilia() {
-  const { goBack, openModal } = useNav()
+  const { goBack, openModal, selectedId } = useNav()
+  const f = FAMILIAS[selectedId ?? 'silva'] ?? FAMILIAS['silva']
   return (
     <div className="cv-screen">
       <TopBar title="Perfil da Família" onBack={goBack} />
       <PageContent>
-        <ProfileHero initials="LS" name="Família Silva" meta="Luana Silva · 3 anos · Via CRAS Ibura" tags={['Risco Alto', 'Vacinação', 'CRAS Ibura']} />
+        <ProfileHero initials={f.initials} name={f.name} meta={f.meta} tags={f.tags} />
         <InfoGrid items={[
-          { label: 'Responsável', value: 'Ana Silva' },
-          { label: 'Telefone', value: '(81) 9 9999-0001' },
-          { label: 'NIS', value: '1234567890' },
-          { label: 'UBS Ref.', value: 'UBS Ibura II' },
-          { label: 'Endereço', value: 'R. das Palmeiras, 114 · Ibura', full: true },
+          { label: 'Responsável', value: f.resp },
+          { label: 'Telefone', value: f.tel },
+          { label: 'NIS', value: f.nis },
+          { label: 'UBS Ref.', value: f.ubs },
+          { label: 'Endereço', value: f.end, full: true },
         ]} />
-        <AlertBanner variant="red">Vacinação tríplice viral com 6 semanas de atraso. Família não comparece às consultas.</AlertBanner>
+        <AlertBanner variant={f.alertVariant}>{f.alerta}</AlertBanner>
         <SectionTitle>Histórico de Atendimentos</SectionTitle>
         <Card>
           <CardBody style={{ padding: '10px 14px' }}>
-            <HistoryItem color={C.red} title="Alerta de vacinação gerado" date="15/05/2026 · Sistema" />
-            <HistoryItem color={C.yel} title="Consulta — faltou" date="10/05/2026 · UBS Ibura II" />
-            <HistoryItem color={C.yel} title="Encaminhamento para pediatria" date="01/05/2026 · CRAS Ibura" />
-            <HistoryItem color={C.green} title="Cadastro realizado" date="10/04/2026 · CRAS Ibura" />
+            {f.historico.map((h, i) => <HistoryItem key={i} color={h.color} title={h.title} date={h.date} />)}
           </CardBody>
         </Card>
         <Btn variant="primary" onClick={() => openModal('enc')}>

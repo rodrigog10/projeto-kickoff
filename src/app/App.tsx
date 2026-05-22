@@ -35,8 +35,16 @@ export default function App() {
   const [screen, setScreen] = useState('s-login')
   const [histStack, setHistStack] = useState<string[]>([])
   const [activeModal, setActiveModal] = useState<string | null>(null)
+  const [selectedId, setSelectedId] = useState<string | null>(null)
 
   function goTo(s: string) {
+    setHistStack(h => [...h, screen])
+    setScreen(s)
+    window.scrollTo(0, 0)
+  }
+
+  function goToWith(s: string, id: string) {
+    setSelectedId(id)
     setHistStack(h => [...h, screen])
     setScreen(s)
     window.scrollTo(0, 0)
@@ -71,7 +79,7 @@ export default function App() {
   }
 
   return (
-    <NavContext.Provider value={{ screen, goTo, goBack, openModal, closeModal, doLogin, doLogout }}>
+    <NavContext.Provider value={{ screen, selectedId, goTo, goToWith, goBack, openModal, closeModal, doLogin, doLogout }}>
       <div className="cv-app">
         {renderScreen(screen)}
         <Modals activeModal={activeModal} />
