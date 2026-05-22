@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { useNav, C } from './context'
-import { TopBar, PageContent, Card, CardHeader, CardBody, CardTitle, Badge, AlertBanner, SectionTitle, HistoryItem, InfoGrid, Btn } from './ui'
+import { DL } from './DesktopLayout'
+import { Card, CardHeader, CardBody, CardTitle, Badge, InfoGrid, Btn } from './ui'
 
 const cidadaos = [
   { id: 'joao', label: 'João Gomes · 7 anos', initials: 'JG', color: C.red },
@@ -67,116 +68,122 @@ const secretariaColor: Record<string, string> = {
 }
 
 export function Visao360() {
-  const { goBack, openModal } = useNav()
+  const { openModal } = useNav()
   const [selectedCidadao, setSelectedCidadao] = useState('joao')
   const d = DADOS[selectedCidadao]
   const cidadao = cidadaos.find(c => c.id === selectedCidadao)!
 
   return (
-    <div className="cv-screen">
-      <TopBar title="Visão 360° do Cidadão" onBack={goBack} />
-      <PageContent>
-
-        {/* Seletor de cidadão */}
-        <div style={{ display: 'flex', gap: 8, marginBottom: 16, overflowX: 'auto', paddingBottom: 4 }}>
-          {cidadaos.map(c => (
-            <div
-              key={c.id}
-              onClick={() => setSelectedCidadao(c.id)}
-              style={{
-                flexShrink: 0, display: 'flex', alignItems: 'center', gap: 8,
-                padding: '8px 14px', borderRadius: 20,
-                background: selectedCidadao === c.id ? C.gradDiag : '#fff',
-                border: `1.5px solid ${selectedCidadao === c.id ? 'transparent' : C.bd}`,
-                cursor: 'pointer',
-              }}
-            >
-              <div style={{ width: 26, height: 26, borderRadius: '50%', background: selectedCidadao === c.id ? 'rgba(255,255,255,.3)' : c.color, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 10, fontWeight: 700, color: '#fff' }}>{c.initials}</div>
-              <span style={{ fontSize: 12, fontWeight: 600, color: selectedCidadao === c.id ? '#fff' : C.t1, whiteSpace: 'nowrap' }}>{c.label}</span>
-            </div>
-          ))}
-        </div>
-
-        {/* Header do cidadão */}
-        <div style={{ background: C.gradDiag, borderRadius: 16, padding: '16px', marginBottom: 12, display: 'flex', alignItems: 'center', gap: 14 }}>
-          <div style={{ width: 52, height: 52, borderRadius: '50%', background: 'rgba(255,255,255,.25)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 18, fontWeight: 800, color: '#fff', flexShrink: 0 }}>{cidadao.initials}</div>
-          <div>
-            <div style={{ fontSize: 17, fontWeight: 800, color: '#fff' }}>{d.nome}</div>
-            <div style={{ fontSize: 12, color: 'rgba(255,255,255,.8)', marginTop: 2 }}>{d.idade} · NIS {d.nis}</div>
-            <div style={{ fontSize: 11, color: 'rgba(255,255,255,.7)', marginTop: 1 }}>{d.end}</div>
+    <DL
+      title="Visão 360° do Cidadão"
+      subtitle="Integração entre Assistência Social, Saúde e Educação"
+      activeScreen="s-visao360"
+      rightAction={
+        <Btn variant="primary" small onClick={() => openModal('enc')}>
+          <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/></svg>
+          Encaminhamento Integrado
+        </Btn>
+      }
+    >
+      {/* Citizen selector */}
+      <div style={{ display: 'flex', gap: 10, marginBottom: 20 }}>
+        {cidadaos.map(c => (
+          <div
+            key={c.id}
+            onClick={() => setSelectedCidadao(c.id)}
+            style={{
+              display: 'flex', alignItems: 'center', gap: 10,
+              padding: '10px 18px', borderRadius: 24,
+              background: selectedCidadao === c.id ? C.gradDiag : '#fff',
+              border: `1.5px solid ${selectedCidadao === c.id ? 'transparent' : C.bd}`,
+              cursor: 'pointer', transition: '.15s',
+            }}
+          >
+            <div style={{ width: 30, height: 30, borderRadius: '50%', background: selectedCidadao === c.id ? 'rgba(255,255,255,.3)' : c.color, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 11, fontWeight: 700, color: '#fff' }}>{c.initials}</div>
+            <span style={{ fontSize: 13, fontWeight: 600, color: selectedCidadao === c.id ? '#fff' : '#1A2D5A', whiteSpace: 'nowrap' }}>{c.label}</span>
           </div>
+        ))}
+      </div>
+
+      {/* Citizen header */}
+      <div style={{ background: C.gradDiag, borderRadius: 16, padding: '20px 24px', marginBottom: 20, display: 'flex', alignItems: 'center', gap: 18 }}>
+        <div style={{ width: 60, height: 60, borderRadius: '50%', background: 'rgba(255,255,255,.25)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 20, fontWeight: 800, color: '#fff', flexShrink: 0 }}>{cidadao.initials}</div>
+        <div>
+          <div style={{ fontSize: 20, fontWeight: 800, color: '#fff' }}>{d.nome}</div>
+          <div style={{ fontSize: 13, color: 'rgba(255,255,255,.85)', marginTop: 3 }}>{d.idade} · NIS {d.nis}</div>
+          <div style={{ fontSize: 12, color: 'rgba(255,255,255,.7)', marginTop: 2 }}>{d.end} · Resp: {d.resp}</div>
         </div>
+      </div>
 
-        {/* 3 cards das secretarias */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: 10, marginBottom: 4 }}>
+      {/* 3 secretaria cards + timeline side by side */}
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 320px', gap: 16, alignItems: 'start' }}>
 
-          {/* Assistência Social */}
-          <Card>
-            <CardHeader>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                  <div style={{ width: 8, height: 8, borderRadius: '50%', background: '#7936C8' }} />
-                  <CardTitle>Assistência Social</CardTitle>
-                </div>
-                <Badge variant={d.social.statusVariant}>{d.social.status}</Badge>
-              </div>
-            </CardHeader>
-            <CardBody>
-              <InfoGrid items={[
-                { label: 'CRAS', value: d.social.cras },
-                { label: 'Encaminhamentos', value: String(d.social.encaminhamentos) },
-              ]} />
-              <div style={{ fontSize: 12, color: C.t2, marginTop: 6, padding: '8px 10px', background: C.redB, borderRadius: 8 }}>{d.social.caso}</div>
-            </CardBody>
-          </Card>
-
-          {/* Saúde */}
-          <Card>
-            <CardHeader>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                  <div style={{ width: 8, height: 8, borderRadius: '50%', background: C.green }} />
-                  <CardTitle>Saúde</CardTitle>
-                </div>
-                <Badge variant={d.saude.statusVariant}>{d.saude.status}</Badge>
-              </div>
-            </CardHeader>
-            <CardBody>
-              <InfoGrid items={[
-                { label: 'UBS', value: d.saude.ubs },
-                { label: 'Última Consulta', value: d.saude.ultimaConsulta },
-                { label: 'Vacinação', value: d.saude.vacinas, color: C.red },
-              ]} />
-              <div style={{ fontSize: 12, color: C.t2, marginTop: 6, padding: '8px 10px', background: C.yelB, borderRadius: 8 }}>{d.saude.alerta}</div>
-            </CardBody>
-          </Card>
-
-          {/* Escolar */}
-          <Card>
-            <CardHeader>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                  <div style={{ width: 8, height: 8, borderRadius: '50%', background: C.blu }} />
-                  <CardTitle>Educação</CardTitle>
-                </div>
-                <Badge variant={d.escolar.statusVariant}>{d.escolar.status}</Badge>
-              </div>
-            </CardHeader>
-            <CardBody>
-              <InfoGrid items={[
-                { label: 'Escola', value: d.escolar.escola },
-                { label: 'Turma', value: d.escolar.serie },
-                { label: 'Frequência', value: d.escolar.freq, color: d.escolar.freq < '80%' ? C.red : C.yel },
-                { label: 'Faltas', value: `${d.escolar.faltas} faltas`, color: d.escolar.faltas >= 5 ? C.red : C.yel },
-              ]} />
-              <div style={{ fontSize: 12, color: C.t2, marginTop: 6, padding: '8px 10px', background: C.bluB, borderRadius: 8 }}>{d.escolar.notas}</div>
-            </CardBody>
-          </Card>
-        </div>
-
-        {/* Linha do tempo integrada */}
-        <SectionTitle>Linha do Tempo Integrada</SectionTitle>
+        {/* Assistência Social */}
         <Card>
+          <CardHeader>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <div style={{ width: 9, height: 9, borderRadius: '50%', background: '#7936C8' }} />
+                <CardTitle>Assistência Social</CardTitle>
+              </div>
+              <Badge variant={d.social.statusVariant}>{d.social.status}</Badge>
+            </div>
+          </CardHeader>
+          <CardBody>
+            <InfoGrid items={[
+              { label: 'CRAS', value: d.social.cras },
+              { label: 'Encaminhamentos', value: String(d.social.encaminhamentos) },
+            ]} />
+            <div style={{ fontSize: 12, color: '#6b7280', marginTop: 8, padding: '8px 10px', background: '#fef2f2', borderRadius: 8 }}>{d.social.caso}</div>
+          </CardBody>
+        </Card>
+
+        {/* Saúde */}
+        <Card>
+          <CardHeader>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <div style={{ width: 9, height: 9, borderRadius: '50%', background: C.green }} />
+                <CardTitle>Saúde</CardTitle>
+              </div>
+              <Badge variant={d.saude.statusVariant}>{d.saude.status}</Badge>
+            </div>
+          </CardHeader>
+          <CardBody>
+            <InfoGrid items={[
+              { label: 'UBS', value: d.saude.ubs },
+              { label: 'Última Consulta', value: d.saude.ultimaConsulta },
+              { label: 'Vacinação', value: d.saude.vacinas, color: C.red },
+            ]} />
+            <div style={{ fontSize: 12, color: '#6b7280', marginTop: 8, padding: '8px 10px', background: '#fffbeb', borderRadius: 8 }}>{d.saude.alerta}</div>
+          </CardBody>
+        </Card>
+
+        {/* Educação */}
+        <Card>
+          <CardHeader>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <div style={{ width: 9, height: 9, borderRadius: '50%', background: C.blu }} />
+                <CardTitle>Educação</CardTitle>
+              </div>
+              <Badge variant={d.escolar.statusVariant}>{d.escolar.status}</Badge>
+            </div>
+          </CardHeader>
+          <CardBody>
+            <InfoGrid items={[
+              { label: 'Escola', value: d.escolar.escola },
+              { label: 'Turma', value: d.escolar.serie },
+              { label: 'Frequência', value: d.escolar.freq, color: d.escolar.freq < '80%' ? C.red : C.yel },
+              { label: 'Faltas', value: `${d.escolar.faltas} faltas`, color: d.escolar.faltas >= 5 ? C.red : C.yel },
+            ]} />
+            <div style={{ fontSize: 12, color: '#6b7280', marginTop: 8, padding: '8px 10px', background: '#eef2fd', borderRadius: 8 }}>{d.escolar.notas}</div>
+          </CardBody>
+        </Card>
+
+        {/* Timeline */}
+        <Card>
+          <CardHeader><CardTitle>Linha do Tempo</CardTitle></CardHeader>
           <CardBody style={{ padding: '12px 14px' }}>
             {d.timeline.map((t, i) => (
               <div key={i} style={{ display: 'flex', gap: 10, marginBottom: i < d.timeline.length - 1 ? 12 : 0 }}>
@@ -195,13 +202,7 @@ export function Visao360() {
             ))}
           </CardBody>
         </Card>
-
-        <Btn variant="primary" onClick={() => openModal('enc')} style={{ marginTop: 8 }}>
-          <svg width="15" height="15" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/></svg>
-          Gerar Encaminhamento Integrado
-        </Btn>
-
-      </PageContent>
-    </div>
+      </div>
+    </DL>
   )
 }
