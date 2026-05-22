@@ -15,11 +15,14 @@ export const C = {
 export interface NavContextType {
   screen: string
   selectedId: string | null
+  menuOpen: boolean
   goTo: (screen: string) => void
   goToWith: (screen: string, id: string) => void
   goBack: () => void
   openModal: (modal: string) => void
   closeModal: () => void
+  openMenu: () => void
+  closeMenu: () => void
   doLogin: (screen: string) => void
   doLogout: () => void
 }
@@ -27,11 +30,14 @@ export interface NavContextType {
 export const NavContext = createContext<NavContextType>({
   screen: 's-login',
   selectedId: null,
+  menuOpen: false,
   goTo: () => {},
   goToWith: () => {},
   goBack: () => {},
   openModal: () => {},
   closeModal: () => {},
+  openMenu: () => {},
+  closeMenu: () => {},
   doLogin: () => {},
   doLogout: () => {},
 })

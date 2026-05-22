@@ -4,6 +4,7 @@ import { LoginScreen } from './components/Login'
 import { ASHome, ASKanban, ASMonitor, ASEnc, ASAlerts, ASFamilia } from './components/AS'
 import { SDHome, SDConsultas, SDPaciente, SDEnc, SDVacina, SDVisitas, SDAlerts } from './components/SD'
 import { ECHome, ECAlunos, ECAluno, ECEnc, ECAlerts } from './components/EC'
+import { Visao360 } from './components/Visao360'
 import { Modals } from './components/Modals'
 
 function renderScreen(screen: string) {
@@ -27,6 +28,7 @@ function renderScreen(screen: string) {
     case 's-ec-aluno':    return <ECAluno />
     case 's-ec-enc':      return <ECEnc />
     case 's-ec-alerts':   return <ECAlerts />
+    case 's-visao360':    return <Visao360 />
     default:              return <LoginScreen />
   }
 }
@@ -36,7 +38,6 @@ export default function App() {
   const [histStack, setHistStack] = useState<string[]>([])
   const [activeModal, setActiveModal] = useState<string | null>(null)
   const [selectedId, setSelectedId] = useState<string | null>(null)
-
   function goTo(s: string) {
     setHistStack(h => [...h, screen])
     setScreen(s)
@@ -79,7 +80,7 @@ export default function App() {
   }
 
   return (
-    <NavContext.Provider value={{ screen, selectedId, goTo, goToWith, goBack, openModal, closeModal, doLogin, doLogout }}>
+    <NavContext.Provider value={{ screen, selectedId, menuOpen: false, goTo, goToWith, goBack, openModal, closeModal, openMenu: () => {}, closeMenu: () => {}, doLogin, doLogout }}>
       <div className="cv-app">
         {renderScreen(screen)}
         <Modals activeModal={activeModal} />

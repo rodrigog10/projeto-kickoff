@@ -12,7 +12,7 @@ interface TopBarProps {
 }
 export function TopBar({ title, subtitle, customTitle, onBack, rightContent }: TopBarProps) {
   return (
-    <div style={{ background: '#fff', borderBottom: `1px solid ${C.bd}`, padding: '0 16px', height: 54, display: 'flex', alignItems: 'center', justifyContent: 'space-between', position: 'sticky', top: 0, zIndex: 50, flexShrink: 0 }}>
+    <div style={{ background: '#fff', borderBottom: `1px solid ${C.bd}`, padding: '0 16px', height: 54, display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexShrink: 0 }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
         {onBack && (
           <button onClick={onBack} style={{ width: 34, height: 34, borderRadius: '50%', background: C.bg, border: `1px solid ${C.bd}`, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: C.t2 }}>
@@ -54,7 +54,7 @@ export function NotifBtn({ onClick, dot = true }: { onClick?: () => void; dot?: 
 interface BnItem { label: string; icon: React.ReactNode; onClick: () => void; active?: boolean; badge?: number | string }
 export function BottomNav({ items }: { items: BnItem[] }) {
   return (
-    <div className="cv-bottom-nav" style={{ background: '#fff', borderTop: `1px solid ${C.bd}`, display: 'flex', position: 'sticky', bottom: 0, zIndex: 50, flexShrink: 0 }}>
+    <div className="cv-bottom-nav" style={{ background: '#fff', borderTop: `1px solid ${C.bd}`, display: 'flex', flexShrink: 0 }}>
       {items.map((item, i) => (
         <button key={i} onClick={item.onClick} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3, padding: '8px 4px', cursor: 'pointer', color: item.active ? C.green : C.t3, border: 'none', background: 'transparent', fontFamily: 'inherit', position: 'relative', transition: '.15s' }}>
           <div style={{ width: 20, height: 20 }}>{item.icon}</div>

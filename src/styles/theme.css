@@ -28,18 +28,18 @@
   background: var(--cv-bg);
   color: var(--cv-t1);
   font-size: 14px;
-  min-height: 100vh;
+  height: 100dvh;
   max-width: 480px;
   margin: 0 auto;
   position: relative;
-  overflow-x: hidden;
+  overflow: hidden;
   -webkit-tap-highlight-color: transparent;
 }
 
 .cv-screen {
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
+  height: 100%;
 }
 
 /* ── Kanban ── */
