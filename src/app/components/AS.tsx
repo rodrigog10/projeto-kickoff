@@ -276,7 +276,7 @@ export function ASMonitor() {
 
 // ── AS ENCAMINHAMENTOS ──
 export function ASEnc() {
-  const { goBack, openModal } = useNav()
+  const { goBack, goToWith, openModal } = useNav()
   return (
     <div className="cv-screen">
       <TopBar title="Encaminhamentos" onBack={goBack} rightContent={<Btn variant="primary" small onClick={() => openModal('enc')}>+ Novo</Btn>} />
@@ -287,13 +287,13 @@ export function ASEnc() {
           <StatCard label="Concluídos" value="19" color={C.green} />
         </StatsGrid>
         <SectionTitle>Aguardando Resposta</SectionTitle>
-        <EncItem name="João Gomes · 7 anos" spec="CAPS Infantil – Psicologia" priority="red" status="yel" date="11/05/2026" />
-        <EncItem name="Carlos Ramos · 5 anos" spec="NASF – Nutrição" priority="red" status="yel" date="13/05/2026" />
-        <EncItem name="Maria Ferreira · 34 anos" spec="Ginecologia / Pré-natal" priority="yel" status="blu" date="01/05/2026" />
-        <EncItem name="Rosa Pereira · 68 anos" spec="Cardiologia" priority="yel" status="blu" date="03/05/2026" />
+        <EncItem name="João Gomes · 7 anos" spec="CAPS Infantil – Psicologia" priority="red" status="yel" date="11/05/2026" onClick={() => goToWith('s-as-familia', 'gomes')} />
+        <EncItem name="Carlos Ramos · 5 anos" spec="NASF – Nutrição" priority="red" status="yel" date="13/05/2026" onClick={() => goToWith('s-as-familia', 'ramos')} />
+        <EncItem name="Maria Ferreira · 34 anos" spec="Ginecologia / Pré-natal" priority="yel" status="blu" date="01/05/2026" onClick={() => goToWith('s-as-familia', 'ferreira')} />
+        <EncItem name="Rosa Pereira · 68 anos" spec="Cardiologia" priority="yel" status="blu" date="03/05/2026" onClick={() => goToWith('s-as-familia', 'pereira')} />
         <SectionTitle>Concluídos Recentes</SectionTitle>
-        <EncItem name="Pedro Alves · 4 anos" spec="Pediatria – UBS Ibura" priority="green" date="10/05/2026" opacity={0.6} />
-        <EncItem name="Cecília Torres · 32 anos" spec="NASF – Nutrição" priority="green" date="09/05/2026" opacity={0.6} />
+        <EncItem name="Pedro Alves · 4 anos" spec="Pediatria – UBS Ibura" priority="green" date="10/05/2026" opacity={0.6} onClick={() => goToWith('s-as-familia', 'silva')} />
+        <EncItem name="Cecília Torres · 32 anos" spec="NASF – Nutrição" priority="green" date="09/05/2026" opacity={0.6} onClick={() => goToWith('s-as-familia', 'souza')} />
       </PageContent>
       <ASNav active="enc" />
     </div>

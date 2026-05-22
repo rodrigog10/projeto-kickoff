@@ -258,9 +258,9 @@ export function ActionCard({ icon, label, sub, onClick }: { icon: React.ReactNod
 }
 
 // ── Encaminhamento item ──
-export function EncItem({ name, spec, priority, status, date, opacity }: { name: string; spec: string; priority: BadgeVariant; status?: BadgeVariant; date: string; opacity?: number }) {
+export function EncItem({ name, spec, priority, status, date, opacity, onClick }: { name: string; spec: string; priority: BadgeVariant; status?: BadgeVariant; date: string; opacity?: number; onClick?: () => void }) {
   return (
-    <div style={{ background: '#fff', borderRadius: 12, border: `1px solid ${C.bd}`, padding: 13, marginBottom: 8, opacity }}>
+    <div onClick={onClick} style={{ background: '#fff', borderRadius: 12, border: `1px solid ${C.bd}`, padding: 13, marginBottom: 8, opacity, cursor: onClick ? 'pointer' : 'default' }}>
       <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 6 }}>
         <div style={{ fontSize: 13, fontWeight: 700 }}>{name}</div>
         <Badge variant={priority}>{priority === 'red' ? 'Urgente' : priority === 'yel' ? 'Médio' : priority === 'green' ? 'Concluído' : 'Normal'}</Badge>
